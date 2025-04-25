@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/daniel/Documents/projects/tetris/main'
+relocations:     []
+...
