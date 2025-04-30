@@ -46,6 +46,10 @@
         "unordered_map": "cpp",
         "variant": "cpp",
         "vector": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "charconv": "cpp",
+        "forward_list": "cpp",
+        "iomanip": "cpp",
+        "random": "cpp"
     }
 }
