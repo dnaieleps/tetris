@@ -8,19 +8,21 @@
 
 /* class definition that serves as a blueprint to the Game object, where all of the games mechanics will be found
 *   @pieceQueue -> queue of Piece objects which represents the pieces that are going to be played next
+*   @currentPiece -> represents the Piece which is currently being used in play 
 *   @heldPiece -> represents the Piece which is currently being held in the Tetris hold box
 *   @score -> represents the current game score. 1 point will be awarded for every tick survived, 30 for every line cleared, and 100 points for every tetris 
 *   @tickSpeed -> represents the speed in which the pieces will move down the screen. the integer value indicates how many ticks will occur in 1 second
 *   @paused -> boolean representing whether or not the game is paused, setting the tickSpeed to 0 and will resume to normal when unpaused
 *   @gameOver -> boolean representing whether or not the game is over, ending when a Piece exceeds the top of the board (ArrayOutofBoundsException)
+*   @justSwapped -> boolean representing whether or not the piece in question was just swapped out of the held box, preventing swap spamming
 */
 class Game {
 private: 
     std::queue<Piece>* pieceQueue; 
-    Piece heldPiece; 
+    std::unique_ptr<Piece> currentPiece, heldPiece; 
     int score;
     int tickSpeed;
-    bool paused, gameOver;
+    bool paused, gameOver, justSwapped;
 
 public: 
     Game(); // Game constructor
@@ -33,8 +35,9 @@ public:
     bool changePause(); // switches to either paused or unpaused depending on its previous state
     bool gameIsOver(); // returns whether or not the game is over, meaning the player lost
     bool changeGameOver(); // changes the gameOver variable to be true, ending the game
+    Piece getCurrentPiece(); // returns the current piece in play 
     Piece getNextPiece(); // pops the top value off of the pieceQueue to be displayed onto the game screen
-    void generateNewPiece(); // generates a new piece to be added to the back of the pieceQueue to maintain constant queue size
-    Piece swapHeldPiece(Piece currpiece); // swaps the held piece with the piece that is currently in play. also makes it so that you can't spam swap
+    Piece generateNewPiece(); // generates a new piece to be added to the back of the pieceQueue to maintain constant queue size
+    void swapHeldPiece(); // swaps the held piece with the piece that is currently in play. also makes it so that you can't spam swap
 };
 #endif

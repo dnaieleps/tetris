@@ -36,15 +36,17 @@ bool Game::changeGameOver() {
     gameOver = !gameOver; 
     return gameOver; 
 }
-void Game::generateNewPiece() {
+Piece Game::getCurrentPiece() {
+    return *currentPiece; 
+}
+Piece Game::generateNewPiece() {
     std::random_device rand; 
     std::mt19937 generator(rand());
     std::uniform_int_distribution<int> distribution(0, 6);
     int randomPiece = distribution(generator);
 
     Piece* piece = new Piece(randomPiece); 
-    pieceQueue->push(*piece);
-    delete piece;
+    return *piece; 
 }
 Piece Game::getNextPiece() {
     if(pieceQueue->empty()) {
@@ -55,6 +57,16 @@ Piece Game::getNextPiece() {
     pieceQueue->pop();
     return top;
 }
-Piece Game::swapHeldPiece(Piece currpiece) {
-    
+void Game::swapHeldPiece() {
+    if(heldPiece == nullptr) {
+        *heldPiece = *currentPiece; 
+        *currentPiece = pieceQueue->front();
+        pieceQueue->pop();
+        pieceQueue->push(generateNewPiece());
+    } else { 
+        Piece temp = *heldPiece;
+        *heldPiece = *currentPiece; 
+        *currentPiece = temp; 
+        currentPiece->changeSwapped();
+    }
 }

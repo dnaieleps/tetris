@@ -7,6 +7,7 @@
 
 #include "game.hpp"
 #include "piece.hpp"
+#include "cell.hpp"
 
 
 int main()

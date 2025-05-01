@@ -17,21 +17,25 @@
 
 
 /* class definition that serves as the blueprint for each of the Tetris pieces
-*   @pieceGrid ->
-*   @color ->
-*   @placed ->
-*
+*   @pieceGrid -> 2D array that represents the blueprint of how to make each specific piece
+*   @color -> sf::Color attribute that just represents the color of the tetris piece
+*   @inPlay -> boolean representing whether or not the tetris piece is currently in play 
+*   @justSwapped -> boolean representing whether or not the Piece in question has just been swapped, preventing swap spamming
 */
 class Piece { 
 private:
     bool* pieceGrid[3][4];
     sf::Color* color; 
-    bool placed; 
+    bool inPlay, justSwapped; 
 
 public:
     Piece();
     Piece(int type);
     ~Piece();
+    bool* getPieceGrid();
+    
+    bool hasJustSwapped(); // returns whether or not the current piece has jus tbeen swapped or not
+    bool changeSwapped(); // switches to either true or false depending on whether or not it has just recently been swapped
 };
 
 
