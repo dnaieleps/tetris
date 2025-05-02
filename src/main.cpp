@@ -22,26 +22,34 @@ int main()
     board->setFillColor(GRAY);
     board->setPosition({30, 75});
 
-    sf::RectangleShape* nextpiece = new sf::RectangleShape({150, 150});
-    nextpiece->setFillColor(GRAY);
-    nextpiece->setPosition({350, 75});
+    sf::RectangleShape* nextPiece = new sf::RectangleShape({150, 150});
+    nextPiece->setFillColor(GRAY);
+    nextPiece->setPosition({350, 75});
 
-    sf::RectangleShape* next3pieces = new sf::RectangleShape({100, 300});
-    next3pieces->setFillColor(GRAY);
-    next3pieces->setPosition({375, 250});
+    sf::RectangleShape* next3Pieces = new sf::RectangleShape({100, 300});
+    next3Pieces->setFillColor(GRAY);
+    next3Pieces->setPosition({375, 240});
+
+    sf::RectangleShape* holdPiece = new sf::RectangleShape({100, 100});
+    holdPiece->setFillColor(GRAY);
+    holdPiece->setPosition({375, 550});
 
     // pause button 
     sf::RectangleShape* pauseButton = new sf::RectangleShape({50, 30});
     pauseButton->setFillColor(LIGHT_GRAY); 
     pauseButton->setPosition({30, 25});
 
-    /*
-    sf::Font arial("arial.ttf");
-    sf::Text* score = new sf::Text(arial, "Score: ", 25);
-    score->setString("Score: ");
-    score->setPosition({260, 25});
-    */
+    // score text
+    sf::Font font; 
+    if (!font.openFromFile("/System/Library/Fonts/Supplemental/Arial.ttf")) {
+        std::cerr << "Error: can't load font file" << std::endl;
+    }
+    sf::Text score(font, "Score: ", 20);
+    score.setPosition({200, 30});    
+    score.setFillColor(sf::Color::White);
+    score.setStyle(sf::Text::Bold);
 
+    
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) window.close();
@@ -51,17 +59,18 @@ int main()
         window.clear();
 
         window.draw(*board);
-        window.draw(*nextpiece);
-        window.draw(*next3pieces);
+        window.draw(*nextPiece);
+        window.draw(*next3Pieces);
         window.draw(*pauseButton);
-       // window.draw(*score);
+        window.draw(*holdPiece);
+        window.draw(score);
 
         window.display();
     }
 
     delete board; 
-    delete nextpiece;
-    delete next3pieces;
+    delete nextPiece;
+    delete next3Pieces;
     delete pauseButton;
-
+    delete holdPiece; 
 }
