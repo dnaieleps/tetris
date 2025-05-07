@@ -70,3 +70,6 @@ void Game::swapHeldPiece() {
         currentPiece->changeSwapped();
     }
 }
+void Game::updateScore() {
+
+}

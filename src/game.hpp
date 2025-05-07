@@ -39,6 +39,6 @@ public:
     Piece getNextPiece(); // pops the top value off of the pieceQueue to be displayed onto the game screen
     Piece generateNewPiece(); // generates a new piece to be added to the back of the pieceQueue to maintain constant queue size
     void swapHeldPiece(); // swaps the held piece with the piece that is currently in play. also makes it so that you can't spam swap
-    void updateInfo();
+    void updateScore();
 };
 #endif
