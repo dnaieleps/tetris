@@ -1,0 +1,138 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+
+#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/OpenGL.hpp>
+
+#include "headers/game.hpp"
+#include "headers/piece.hpp"
+#include "headers/cell.hpp"
+
+int main()
+{
+    // initializing game 
+    Game* game = new Game();
+
+    /****** RENDERING ALL GAME OBJECTS ******/
+    auto objs = new std::vector<std::unique_ptr<sf::Drawable>>();  
+
+    // render the main window 
+    sf::RenderWindow window(sf::VideoMode({525, 675}), "Tetris by Daniel ;3");
+    window.setFramerateLimit(60);
+    window.setVerticalSyncEnabled(true);
+
+    // creating boards and objects where gameplay will happen
+    auto board = std::make_unique<sf::RectangleShape>(sf::Vector2f(300, 575)); 
+    board->setFillColor(GRAY);
+    board->setPosition({30, 75});
+
+    int gridRows = 20; 
+    int gridCols = 10; 
+    auto grid = std::make_unique<sf::VertexArray>(2 * (gridRows + gridCols -2));     // FIX THIS NOW.
+
+    auto nextPiece = std::make_unique<sf::RectangleShape>(sf::Vector2f(150, 150));
+    nextPiece->setFillColor(GRAY);
+    nextPiece->setPosition({350, 75});
+
+    auto next3Pieces = std::make_unique<sf::RectangleShape>(sf::Vector2f(100, 300));
+    next3Pieces->setFillColor(GRAY);
+    next3Pieces->setPosition({375, 240});
+
+    auto holdPiece = std::make_unique<sf::RectangleShape>(sf::Vector2f(100, 100));
+    holdPiece->setFillColor(GRAY);
+    holdPiece->setPosition({375, 550});
+
+    auto restartButton = std::make_unique<sf::RectangleShape>(sf::Vector2f(50, 30)); 
+    restartButton->setFillColor(LIGHT_GRAY);
+    restartButton->setPosition({30, 25}); 
+
+    auto pauseButton = std::make_unique<sf::RectangleShape>(sf::Vector2f(50, 30));
+    pauseButton->setFillColor(LIGHT_GRAY); 
+    pauseButton->setPosition({95, 25});
+
+    // universal font to be used for all text in game
+    sf::Font arial; 
+    if (!arial.openFromFile("/System/Library/Fonts/Supplemental/Arial.ttf")) {
+        std::cerr << "Error: can't load font file" << std::endl;
+    }
+
+     // text for restart button 
+    auto restartText = std::make_unique<sf::Text>(arial);
+    restartText->setString("restart");
+    restartText->setCharacterSize(13);
+    restartText->setPosition({100, 30});
+    restartText->setFillColor(sf::Color::Black);
+
+    // text for pause button 
+    auto pauseText = std::make_unique<sf::Text>(arial);
+    pauseText->setString("pause");
+    pauseText->setCharacterSize(13);
+    pauseText->setPosition({35, 30});
+    pauseText->setFillColor(sf::Color::Black);
+
+    // text that will represent the score 
+    auto score = std::make_unique<sf::Text>(arial);
+    score->setString("Score: ");
+    score->setCharacterSize(20); 
+    score->setPosition({200, 30});    
+    score->setFillColor(sf::Color::White);
+    score->setStyle(sf::Text::Bold);
+
+    // adding all screen components to objs vector 
+    objs->push_back(std::move(board)); 
+    objs->push_back(std::move(nextPiece)); 
+    objs->push_back(std::move(next3Pieces)); 
+    objs->push_back(std::move(holdPiece)); 
+    objs->push_back(std::move(restartButton));
+    objs->push_back(std::move(pauseButton)); 
+    objs->push_back(std::move(restartText));
+    objs->push_back(std::move(pauseText));
+    objs->push_back(std::move(score));
+    /***** END OF RENDERING *****/
+
+
+
+
+    // main application loop 
+    while (window.isOpen()) {
+
+        // handles all game events and game updates 
+        while (const std::optional event = window.pollEvent()) {
+            // updates that occur regardless of user input (gameloop)
+
+
+
+
+            // updates that happen only when prompted by user input (events)
+            if (event->is<sf::Event::Closed>()) window.close();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) window.close(); 
+
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)){
+                sf::Vector2i mousePos = sf::Mouse::getPosition(); 
+
+                if (mousePos == sf::Vector2i{0, 0}) {
+
+                } else if (false) {
+
+                } else if (false) {
+
+                }
+            }
+        }
+        
+        // redraws all components to screen every game loop as needed
+        window.clear();
+        for (const auto& o : *objs) {
+            window.draw(*o);
+        }
+        window.display();
+    }
+
+    delete game; 
+    delete objs; 
+}
