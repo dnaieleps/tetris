@@ -1,7 +1,4 @@
 #pragma once 
-#ifndef CELL_H
-#define CELL_H
-
 #include <SFML/Graphics.hpp>
 
 class Cell {
@@ -11,4 +8,3 @@ private:
 public: 
 
 };
-#endif 

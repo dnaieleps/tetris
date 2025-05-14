@@ -1,10 +1,6 @@
 #pragma once
-#ifndef GAME_H
-#define GAME_H
-
 #include <queue>
 #include "piece.hpp"
-
 
 /* class definition that serves as a blueprint to the Game object, where all of the games mechanics will be found
 *   @pieceQueue -> queue of Piece objects which represents the pieces that are going to be played next
@@ -35,10 +31,10 @@ public:
     bool changePause(); // switches to either paused or unpaused depending on its previous state
     bool gameIsOver(); // returns whether or not the game is over, meaning the player lost
     bool changeGameOver(); // changes the gameOver variable to be true, ending the game
+    bool hasJustSwapped(); // returns whether or not the player has just swapped a piece. put in place so you can't spam swap
     Piece getCurrentPiece(); // returns the current piece in play 
     Piece getNextPiece(); // pops the top value off of the pieceQueue to be displayed onto the game screen
     Piece generateNewPiece(); // generates a new piece to be added to the back of the pieceQueue to maintain constant queue size
-    void swapHeldPiece(); // swaps the held piece with the piece that is currently in play. also makes it so that you can't spam swap
-    void updateScore();
+    void swapHeldPiece(); // swaps the held piece with the piece that is currently in play
+    void updateScore(); // updates the score every gametick
 };
-#endif

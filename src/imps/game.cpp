@@ -1,10 +1,10 @@
-#include "game.hpp"
+#include "../headers/game.hpp"
 #include <random>
 
 Game::Game() {
     score = 0; 
     tickSpeed = 1; 
-    paused = gameOver = false; 
+    paused = gameOver = justSwapped = false; 
     pieceQueue = new std::queue<Piece>();
 }
 Game::~Game() {
@@ -36,6 +36,9 @@ bool Game::changeGameOver() {
     gameOver = !gameOver; 
     return gameOver; 
 }
+bool Game::hasJustSwapped() {
+    return justSwapped; 
+}
 Piece Game::getCurrentPiece() {
     return *currentPiece; 
 }
@@ -58,7 +61,8 @@ Piece Game::getNextPiece() {
     return top;
 }
 void Game::swapHeldPiece() {
-    if(heldPiece == nullptr) {
+    std::unique_ptr<Piece> emptyPiece = std::make_unique<Piece>(0); 
+    if(heldPiece == emptyPiece) {
         *heldPiece = *currentPiece; 
         *currentPiece = pieceQueue->front();
         pieceQueue->pop();
@@ -67,7 +71,7 @@ void Game::swapHeldPiece() {
         Piece temp = *heldPiece;
         *heldPiece = *currentPiece; 
         *currentPiece = temp; 
-        currentPiece->changeSwapped();
+        
     }
 }
 void Game::updateScore() {

@@ -1,7 +1,4 @@
 #pragma once
-#ifndef PIECE_H
-#define PIECE_H
-
 #include <SFML/Graphics.hpp>
 
 /******* COLOR CONSTANT DEFINITIONS *******/
@@ -24,19 +21,16 @@
 */
 class Piece { 
 private:
+    int type;
     bool* pieceGrid[3][4];
     sf::Color* color; 
-    bool inPlay, justSwapped; 
+    bool inPlay; 
 
 public:
     Piece();
     Piece(int type);
     ~Piece();
+    int getType(); 
     bool* getPieceGrid();
-    
-    bool hasJustSwapped(); // returns whether or not the current piece has jus tbeen swapped or not
-    bool changeSwapped(); // switches to either true or false depending on whether or not it has just recently been swapped
+    bool operator==(const Piece& other); 
 };
-
-
-#endif
