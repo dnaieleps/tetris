@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <memory>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Font.hpp>
@@ -33,7 +34,9 @@ int main()
 
     int gridRows = 20; 
     int gridCols = 10; 
-    auto grid = std::make_unique<sf::VertexArray>(2 * (gridRows + gridCols -2));     // FIX THIS NOW.
+    // auto grid = new sf::VectorArray(sf::Lines, 2 * (gridRows + gridCols - 2));      FIX THIS NOW. 
+
+
 
     auto nextPiece = std::make_unique<sf::RectangleShape>(sf::Vector2f(150, 150));
     nextPiece->setFillColor(GRAY);
@@ -83,6 +86,20 @@ int main()
     score->setFillColor(sf::Color::White);
     score->setStyle(sf::Text::Bold);
 
+    // loading in pause icon texture from file
+    auto textures = new std::vector<std::unique_ptr<sf::Texture>>();
+    auto pauseTexture = std::make_unique<sf::Texture>(); 
+    if(!pauseTexture->loadFromFile("../resources/pause.png")) {
+        std::cerr << "Error: could not load image from file" << std::endl; 
+    }
+
+    // creating sprite where pauseTexture will be placed
+    auto pauseIconHolder = std::make_unique<sf::Sprite>(*pauseTexture);
+    pauseIconHolder->setPosition({(525 - 200) / 2, (675 - 200) / 2});
+    pauseIconHolder->setScale({0.4, 0.4}); 
+    pauseIconHolder->setColor(sf::Color(255, 255, 255, 128)); 
+    textures->push_back(std::move(pauseTexture));
+
     // adding all screen components to objs vector 
     objs->push_back(std::move(board)); 
     objs->push_back(std::move(nextPiece)); 
@@ -93,6 +110,7 @@ int main()
     objs->push_back(std::move(restartText));
     objs->push_back(std::move(pauseText));
     objs->push_back(std::move(score));
+    objs->push_back(std::move(pauseIconHolder));
     /***** END OF RENDERING *****/
 
 
@@ -113,10 +131,19 @@ int main()
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) window.close(); 
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)){
-                sf::Vector2i mousePos = sf::Mouse::getPosition(); 
+                auto mousePos = sf::Mouse::getPosition(window); 
+                auto mousePosWindow = window.mapPixelToCoords(mousePos);
+                
+                if (pauseButton->getGlobalBounds().contains(mousePosWindow)) {
+                    if (!game->isPaused()) { 
+                        game->changePause(); 
+                    } 
 
-                if (mousePos == sf::Vector2i{0, 0}) {
-
+                    while (game->isPaused()) {
+                        game->setTickSpeed(0); 
+                        
+                    }
+                    
                 } else if (false) {
 
                 } else if (false) {
