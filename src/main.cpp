@@ -97,7 +97,7 @@ int main()
     auto pauseIconHolder = std::make_unique<sf::Sprite>(*pauseTexture);
     pauseIconHolder->setPosition({(525 - 200) / 2, (675 - 200) / 2});
     pauseIconHolder->setScale({0.4, 0.4}); 
-    pauseIconHolder->setColor(sf::Color(255, 255, 255, 128)); 
+    pauseIconHolder->setColor(sf::Color(255, 255, 255, 0)); 
     textures->push_back(std::move(pauseTexture));
 
     // adding all screen components to objs vector 
@@ -124,32 +124,37 @@ int main()
             // updates that occur regardless of user input (gameloop)
 
 
-
-
+            
             // updates that happen only when prompted by user input (events)
             if (event->is<sf::Event::Closed>()) window.close();
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) window.close(); 
-
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)){
-                auto mousePos = sf::Mouse::getPosition(window); 
-                auto mousePosWindow = window.mapPixelToCoords(mousePos);
+            
+            if (event->is<sf::Event::KeyPressed>()) {
+                auto keyPressed = event->getIf<sf::Event::KeyPressed>(); 
                 
-                if (pauseButton->getGlobalBounds().contains(mousePosWindow)) {
-                    if (!game->isPaused()) { 
+                switch (keyPressed->scancode) {
+                    case sf::Keyboard::Scancode::Escape: 
+                        window.close(); 
+                    case sf::Keyboard::Scancode::P: 
                         game->changePause(); 
-                    } 
-
-                    while (game->isPaused()) {
-                        game->setTickSpeed(0); 
-                        
-                    }
-                    
-                } else if (false) {
-
-                } else if (false) {
+                        pauseIconHolder->setColor(sf::Color(255, 255, 255, 128)); 
+                    default: 
+                        std::cout << "no command exists for this key yet!" << std::endl; 
 
                 }
             }
+            
+            /* mouse events (to be implemented)
+            if (event->is<sf::Event::MouseButtonPressed>()) { 
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+                    auto mousePos = sf::Mouse::getPosition(window); 
+                    auto mousePosWindow = window.mapPixelToCoords(mousePos);
+
+                    if (pauseButton->getGlobalBounds().contains(mousePosWindow)) {
+                        pauseIconHolder->setColor(sf::Color(255, 255, 255, 128)); 
+                    } 
+                }
+            }
+                */
         }
         
         // redraws all components to screen every game loop as needed
@@ -162,4 +167,5 @@ int main()
 
     delete game; 
     delete objs; 
+    delete textures; 
 }
