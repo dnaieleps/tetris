@@ -1,11 +1,13 @@
 #pragma once
 #include <queue>
 #include "piece.hpp"
+#include "cell.hpp"
 
 /* class definition that serves as a blueprint to the Game object, where all of the games mechanics will be found
 *   @pieceQueue -> queue of Piece objects which represents the pieces that are going to be played next
 *   @currentPiece -> represents the Piece which is currently being used in play 
 *   @heldPiece -> represents the Piece which is currently being held in the Tetris hold box
+*   @grid -> represents the tetris gameboard where each Cell represents a grid tile on the gameboard
 *   @score -> represents the current game score. 1 point will be awarded for every tick survived, 30 for every line cleared, and 100 points for every tetris 
 *   @tickSpeed -> represents the speed in which the pieces will move down the screen. the integer value indicates how many ticks will occur in 1 second
 *   @paused -> boolean representing whether or not the game is paused, setting the tickSpeed to 0 and will resume to normal when unpaused
@@ -16,6 +18,7 @@ class Game {
 private: 
     std::queue<Piece>* pieceQueue; 
     std::unique_ptr<Piece> currentPiece, heldPiece; 
+    Cell grid[24][10]; 
     int score;
     int tickSpeed;
     bool paused, gameOver, justSwapped;

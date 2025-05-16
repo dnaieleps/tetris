@@ -14,14 +14,36 @@
 #include "headers/piece.hpp"
 #include "headers/cell.hpp"
 
+
+sf::VertexArray drawGrid(sf::RenderWindow& win, int rows, int cols){
+    // initialize values
+    int numLines = rows+cols-2;
+    sf::VertexArray grid(sf::PrimitiveType::Lines, 2*(numLines));
+    win.setView(win.getDefaultView());
+    auto size = win.getView().getSize();
+    float rowH = size.y/rows;
+    float colW = size.x/cols;
+    // row separators
+    for(int i=0; i < rows-1; i++){
+        int r = i+1;
+        float rowY = rowH*r;
+        grid[i*2].position = {0, rowY};
+        grid[i*2+1].position = {size.x, rowY};
+    }
+    // column separators
+    for(int i=rows-1; i < numLines; i++){
+        int c = i-rows+2;
+        float colX = colW*c;
+        grid[i*2].position = {colX, 0};
+        grid[i*2+1].position = {colX, size.y};
+    }
+
+    return grid; 
+}
+
 int main()
 {
-    // initializing game 
-    Game* game = new Game();
-
-    /****** RENDERING ALL GAME OBJECTS ******/
-    auto objs = new std::vector<std::unique_ptr<sf::Drawable>>();  
-
+    /****** CREATING ALL GAME OBJECTS ******/
     // render the main window 
     sf::RenderWindow window(sf::VideoMode({525, 675}), "Tetris by Daniel ;3");
     window.setFramerateLimit(60);
@@ -32,13 +54,10 @@ int main()
     board->setFillColor(GRAY);
     board->setPosition({30, 75});
 
-    /*
-    int gridRows = 20; 
+    int gridRows = 24; 
     int gridCols = 10; 
-    auto grid = new sf::VectorArray(sf::Lines, 2 * (gridRows + gridCols - 2));      FIX THIS NOW. 
-    */
-
-
+    auto grid = std::make_unique<sf::RectangleShape>(drawGrid(window, gridRows, gridCols)); 
+    
     auto nextPiece = std::make_unique<sf::RectangleShape>(sf::Vector2f(150, 150));
     nextPiece->setFillColor(GRAY);
     nextPiece->setPosition({350, 75});
@@ -69,14 +88,14 @@ int main()
     auto restartText = std::make_unique<sf::Text>(arial);
     restartText->setString("restart");
     restartText->setCharacterSize(13);
-    restartText->setPosition({100, 30});
+    restartText->setPosition({35, 30});
     restartText->setFillColor(sf::Color::Black);
 
     // text for pause button 
     auto pauseText = std::make_unique<sf::Text>(arial);
     pauseText->setString("pause");
     pauseText->setCharacterSize(13);
-    pauseText->setPosition({35, 30});
+    pauseText->setPosition({100, 30});
     pauseText->setFillColor(sf::Color::Black);
 
     // text that will represent the score 
@@ -100,22 +119,13 @@ int main()
     pauseIconHolder->setScale({0.4, 0.4}); 
     pauseIconHolder->setColor(sf::Color(255, 255, 255, 0)); 
     textures->push_back(std::move(pauseTexture));
-
-    // adding all screen components to objs vector 
-    objs->push_back(std::move(board)); 
-    objs->push_back(std::move(nextPiece)); 
-    objs->push_back(std::move(next3Pieces)); 
-    objs->push_back(std::move(holdPiece)); 
-    objs->push_back(std::move(restartButton));
-    objs->push_back(std::move(pauseButton)); 
-    objs->push_back(std::move(restartText));
-    objs->push_back(std::move(pauseText));
-    objs->push_back(std::move(score));
-    objs->push_back(std::move(pauseIconHolder));
-    /***** END OF RENDERING *****/
+    
+    /***** END OF CREATING GAME OBJECTS *****/
 
 
 
+    // initializing game 
+    Game* game = new Game();
 
     // main application loop 
     while (window.isOpen()) {
@@ -129,55 +139,84 @@ int main()
             // updates that happen only when prompted by user input (events)
             if(event.has_value()) {
                 if (event->is<sf::Event::Closed>()) window.close();
-            
+
+
+                /*** ALL MOUSE CLICK EVENTS (FOR ONSCREEN BUTTONS) ***/
+                if (event->is<sf::Event::MouseButtonPressed>() && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+                    auto mousePos = sf::Mouse::getPosition(window); 
+                    auto mousePosVec = sf::Vector2f({static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)}); 
+
+                    if (pauseButton->getGlobalBounds().contains(mousePosVec)) {
+                        if (pauseIconHolder->getColor() == sf::Color(255, 255, 255, 128)) { // if pause is already activated
+                            game->changePause();
+                            pauseIconHolder->setColor(sf::Color(255, 255, 255, 0)); 
+                        } else { 
+                            pauseIconHolder->setColor(sf::Color(255, 255, 255, 128)); 
+                        }
+                    } else if (restartButton->getGlobalBounds().contains(mousePosVec)) {
+                        window.close(); 
+                        main(); 
+                    }
+
+                }
+
+
+                /*** ALL KEYPRESS EVENTS ***/
                 if (event->is<sf::Event::KeyPressed>()) {
                     auto keyPressed = event->getIf<sf::Event::KeyPressed>(); 
-                    
                     switch (keyPressed->scancode) {
-                        case sf::Keyboard::Scancode::Escape: 
+                        case sf::Keyboard::Scancode::Escape: // close window
                             window.close(); 
                             break;
-                        case sf::Keyboard::Scancode::Space: 
-                            if(window.getSize() == sf::Vector2u({200, 200})) {
-                                window.setSize({525, 675}); 
+                        case sf::Keyboard::Scancode::P: // pause
+                            if (pauseIconHolder->getColor() == sf::Color(255, 255, 255, 128)) { // if pause is already activated
+                                game->changePause();
+                                pauseIconHolder->setColor(sf::Color(255, 255, 255, 0)); 
                             } else { 
-                                window.setSize({200, 200}); 
-                            } 
-                            break; 
-                        case sf::Keyboard::Scancode::P: 
-                            
+                                pauseIconHolder->setColor(sf::Color(255, 255, 255, 128)); 
+                            }
                             break;
+                        case sf::Keyboard::Scancode::R: // restart game
+                            window.close(); 
+                            main(); 
+                            break;
+                        case sf::Keyboard::Scancode::W: // rotate cw
+                        case sf::Keyboard::Scancode::A: // move left
+                        case sf::Keyboard::Scancode::S: // soft drop
+                        case sf::Keyboard::Scancode::D: // move right 
+                        case sf::Keyboard::Scancode::LShift: // hold 
+                        case sf::Keyboard::Scancode::Up: // rotate cw
+                        case sf::Keyboard::Scancode::Left: // move left
+                        case sf::Keyboard::Scancode::Down: // soft drop
+                        case sf::Keyboard::Scancode::Right: // move right
+                        case sf::Keyboard::Scancode::RShift: // hold 
+                        case sf::Keyboard::Scancode::Space: // hard drop
+                         
                         default: 
                             std::cout << "no command exists for this key yet!" << std::endl; 
                             break;
                     }
                 }
             }
-            
-            
-            /* mouse events (to be implemented)
-            if (event->is<sf::Event::MouseButtonPressed>()) { 
-                if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-                    auto mousePos = sf::Mouse::getPosition(window); 
-                    auto mousePosWindow = window.mapPixelToCoords(mousePos);
+        }
 
-                    if (pauseButton->getGlobalBounds().contains(mousePosWindow)) {
-                        pauseIconHolder->setColor(sf::Color(255, 255, 255, 128)); 
-                    } 
-                }
-            }
-                */
-        }
-        
-        // redraws all components to screen every game loop as needed
-        window.clear();
-        for (const auto& o : *objs) {
-            window.draw(*o);
-        }
-        window.display();
+        window.clear(); 
+
+        window.draw(*board); 
+        window.draw(*nextPiece); 
+        window.draw(*next3Pieces); 
+        window.draw(*holdPiece); 
+        window.draw(*restartButton); 
+        window.draw(*pauseButton); 
+        window.draw(*restartText); 
+        window.draw(*pauseText); 
+        window.draw(*score); 
+        window.draw(*pauseIconHolder); 
+        window.draw(*grid); 
+
+        window.display(); 
     }
 
     delete game; 
-    delete objs; 
     delete textures; 
 }

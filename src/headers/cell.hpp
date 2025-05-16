@@ -4,6 +4,8 @@
 class Cell {
 private: 
     sf::RectangleShape cell; 
+    sf::Color fillColor; 
+
     bool filled; 
 public: 
     Cell(); 
