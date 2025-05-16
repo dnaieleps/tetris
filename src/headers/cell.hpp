@@ -6,5 +6,8 @@ private:
     sf::RectangleShape cell; 
     bool filled; 
 public: 
-
+    Cell(); 
+    ~Cell(); 
+    bool getFilled(); 
+    bool changeFilled(); 
 };

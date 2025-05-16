@@ -50,6 +50,7 @@
         "charconv": "cpp",
         "forward_list": "cpp",
         "iomanip": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "unordered_set": "cpp"
     }
 }

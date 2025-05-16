@@ -1,6 +1,6 @@
 # Compiler settings
 CXX = g++
-CXXFLAGS = -std=c++23 -I/Users/daniel/documents/libraries/c++/sfml/include
+CXXFLAGS = -std=c++23 -Wall -Wextra -Werror -I/Users/daniel/documents/libraries/c++/sfml/include
 
 # Linker settings
 LDFLAGS = -L/Users/daniel/documents/libraries/c++/sfml/build/lib -lsfml-graphics -lsfml-window -lsfml-system -Wl,-rpath,/Users/daniel/documents/libraries/c++/sfml/build/lib

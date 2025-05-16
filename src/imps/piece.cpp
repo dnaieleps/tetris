@@ -4,7 +4,7 @@ Piece::Piece() {
 
 }
 Piece::Piece(int type){
-
+    this->type = type; 
 }
 Piece::~Piece(){
 

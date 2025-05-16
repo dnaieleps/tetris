@@ -32,10 +32,11 @@ int main()
     board->setFillColor(GRAY);
     board->setPosition({30, 75});
 
+    /*
     int gridRows = 20; 
     int gridCols = 10; 
-    // auto grid = new sf::VectorArray(sf::Lines, 2 * (gridRows + gridCols - 2));      FIX THIS NOW. 
-
+    auto grid = new sf::VectorArray(sf::Lines, 2 * (gridRows + gridCols - 2));      FIX THIS NOW. 
+    */
 
 
     auto nextPiece = std::make_unique<sf::RectangleShape>(sf::Vector2f(150, 150));
@@ -126,22 +127,33 @@ int main()
 
             
             // updates that happen only when prompted by user input (events)
-            if (event->is<sf::Event::Closed>()) window.close();
+            if(event.has_value()) {
+                if (event->is<sf::Event::Closed>()) window.close();
             
-            if (event->is<sf::Event::KeyPressed>()) {
-                auto keyPressed = event->getIf<sf::Event::KeyPressed>(); 
-                
-                switch (keyPressed->scancode) {
-                    case sf::Keyboard::Scancode::Escape: 
-                        window.close(); 
-                    case sf::Keyboard::Scancode::P: 
-                        game->changePause(); 
-                        pauseIconHolder->setColor(sf::Color(255, 255, 255, 128)); 
-                    default: 
-                        std::cout << "no command exists for this key yet!" << std::endl; 
-
+                if (event->is<sf::Event::KeyPressed>()) {
+                    auto keyPressed = event->getIf<sf::Event::KeyPressed>(); 
+                    
+                    switch (keyPressed->scancode) {
+                        case sf::Keyboard::Scancode::Escape: 
+                            window.close(); 
+                            break;
+                        case sf::Keyboard::Scancode::Space: 
+                            if(window.getSize() == sf::Vector2u({200, 200})) {
+                                window.setSize({525, 675}); 
+                            } else { 
+                                window.setSize({200, 200}); 
+                            } 
+                            break; 
+                        case sf::Keyboard::Scancode::P: 
+                            
+                            break;
+                        default: 
+                            std::cout << "no command exists for this key yet!" << std::endl; 
+                            break;
+                    }
                 }
             }
+            
             
             /* mouse events (to be implemented)
             if (event->is<sf::Event::MouseButtonPressed>()) { 
