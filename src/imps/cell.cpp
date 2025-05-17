@@ -1,10 +1,10 @@
 #include "../headers/cell.hpp"
 
-Cell::Cell() {
+const sf::Vector2f Cell::cellDimensions = sf::Vector2f({28, 28}); 
 
-}
-Cell::~Cell() { 
-
+Cell::Cell(sf::RectangleShape& cover_) {
+    cover = cover_; 
+    filled = false; 
 }
 bool Cell::getFilled() {
     return filled; 
@@ -12,4 +12,7 @@ bool Cell::getFilled() {
 bool Cell::changeFilled() {
     filled = !filled; 
     return filled; 
+}
+sf::RectangleShape Cell::getCover() {
+    return cover; 
 }

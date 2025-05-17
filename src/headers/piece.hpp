@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "cell.hpp"
 
 /******* COLOR CONSTANT DEFINITIONS *******/
 #define GRAY sf::Color(57, 63, 78, 255)                      // board windows and sub-windows
@@ -22,15 +23,14 @@
 class Piece { 
 private:
     int type;
-    bool* pieceGrid[3][4];
+    std::array<std::array<Cell*, 3>, 4>* pieceGrid; 
     sf::Color* color; 
-    bool inPlay; 
 
 public:
-    Piece();
-    Piece(int type);
+    Piece() = default;
+    Piece(int type_);
     ~Piece();
     int getType(); 
-    bool* getPieceGrid();
+    std::array<std::array<Cell*, 3>, 4>* getPieceGrid();
     bool operator==(const Piece& other); 
 };

@@ -2,14 +2,15 @@
 #include <SFML/Graphics.hpp>
 
 class Cell {
-private: 
-    sf::RectangleShape cell; 
-    sf::Color fillColor; 
-
+private:
+    sf::RectangleShape cover;
     bool filled; 
 public: 
-    Cell(); 
-    ~Cell(); 
+    const static sf::Vector2f cellDimensions; 
+    Cell() = default; 
+    Cell(sf::RectangleShape& cover_);
+    ~Cell() = default; 
     bool getFilled(); 
     bool changeFilled(); 
+    sf::RectangleShape getCover(); 
 };

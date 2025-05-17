@@ -7,7 +7,7 @@
 *   @pieceQueue -> queue of Piece objects which represents the pieces that are going to be played next
 *   @currentPiece -> represents the Piece which is currently being used in play 
 *   @heldPiece -> represents the Piece which is currently being held in the Tetris hold box
-*   @grid -> represents the tetris gameboard where each Cell represents a grid tile on the gameboard
+*   @grid -> 2d std::array that represents the game grid that overlays the main board
 *   @score -> represents the current game score. 1 point will be awarded for every tick survived, 30 for every line cleared, and 100 points for every tetris 
 *   @tickSpeed -> represents the speed in which the pieces will move down the screen. the integer value indicates how many ticks will occur in 1 second
 *   @paused -> boolean representing whether or not the game is paused, setting the tickSpeed to 0 and will resume to normal when unpaused
@@ -17,8 +17,8 @@
 class Game {
 private: 
     std::queue<Piece>* pieceQueue; 
-    std::unique_ptr<Piece> currentPiece, heldPiece; 
-    Cell grid[24][10]; 
+    Piece* currentPiece, *heldPiece; 
+    std::array<std::array<Cell*, 10>, 20>* grid; 
     int score;
     int tickSpeed;
     bool paused, gameOver, justSwapped;
@@ -40,4 +40,7 @@ public:
     Piece generateNewPiece(); // generates a new piece to be added to the back of the pieceQueue to maintain constant queue size
     void swapHeldPiece(); // swaps the held piece with the piece that is currently in play
     void updateScore(); // updates the score every gametick
+    std::array<std::array<Cell*, 10>, 20>& getGrid(); // returns the address of the game grid 
+    void spawnPiece(Piece& piece); // copies the passed Piece's pieceGrid onto the spawnpoint of the game grid (top middle)
+    void movePiece(sf::Keyboard::Scancode key); // moves the copied piece along the board as signified by the arrow that is entered
 };

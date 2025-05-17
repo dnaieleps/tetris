@@ -139,6 +139,7 @@ int main()
                 /*** ALL KEYPRESS EVENTS ***/
                 if (event->is<sf::Event::KeyPressed>()) {
                     auto keyPressed = event->getIf<sf::Event::KeyPressed>(); 
+                    
                     switch (keyPressed->scancode) {
                         case sf::Keyboard::Scancode::Escape: // close window
                             window.close(); 
@@ -156,17 +157,27 @@ int main()
                             main(); 
                             break;
                         case sf::Keyboard::Scancode::W: // rotate cw
+                            break;
                         case sf::Keyboard::Scancode::A: // move left
+                            break;
                         case sf::Keyboard::Scancode::S: // soft drop
+                            break;
                         case sf::Keyboard::Scancode::D: // move right 
+                            break;
                         case sf::Keyboard::Scancode::LShift: // hold 
+                            break;
                         case sf::Keyboard::Scancode::Up: // rotate cw
+                            break;
                         case sf::Keyboard::Scancode::Left: // move left
+                            break;
                         case sf::Keyboard::Scancode::Down: // soft drop
+                            break;
                         case sf::Keyboard::Scancode::Right: // move right
+                            break;
                         case sf::Keyboard::Scancode::RShift: // hold 
+                            break;
                         case sf::Keyboard::Scancode::Space: // hard drop
-                         
+                            break;
                         default: 
                             std::cout << "no command exists for this key yet!" << std::endl; 
                             break;
@@ -174,13 +185,8 @@ int main()
                 }
             }
         }
- 
-        for (int i = 0; i < (screenSize.x / blockSize.x); i++) { 
-            for(int j = 0; j < (screenSize.y / blockSize.y); j++) {
-                
-            }
-        }
 
+        /*** DRAWING EVERYTHING TO SCREEN ***/
         window.clear();  
 
         window.draw(*board); 
@@ -194,6 +200,7 @@ int main()
         window.draw(*score); 
         window.draw(*pauseIconHolder); 
 
+        // building the grid where the blocks will all be placed
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 20; j++) {
                 sf::VertexArray tile(sf::PrimitiveType::LineStrip, 5); 
@@ -205,28 +212,17 @@ int main()
                 tile[3].position = sf::Vector2f((30 + (i * 30)), (105 + (j * 30))); 
                 tile[4].position = sf::Vector2f((30 + (i * 30)), (75 + (j * 30))); 
 
-                tile[0].color = sf::Color::White; 
-                tile[1].color = sf::Color::White; 
-                tile[2].color = sf::Color::White; 
-                tile[3].color = sf::Color::White; 
-                tile[4].color = sf::Color::White; 
-
+                tile[0].color = tile[1].color = tile[2].color = tile[3].color = tile[4].color = sf::Color(343540);
                 window.draw(tile); 
             }
         }
 
-        /*
-        sf::VertexArray triangle(sf::PrimitiveType::LineStrip, 3); 
-        triangle[0].position = sf::Vector2f(10, 10); 
-        triangle[1].position = sf::Vector2f(100, 10);
-        triangle[2].position = sf::Vector2f(100, 100);
-        
-        triangle[0].color = sf::Color::White; 
-        triangle[1].color = sf::Color::White; 
-        triangle[2].color = sf::Color::White; 
-        
-        window.draw(triangle);
-        */
+        // drawing all the tiles from the cell grid onto the screen
+        for (std::array<Cell*, 10> row : game->getGrid()) {
+            for (Cell* t : row) {
+                window.draw(t->getCover()); 
+            }
+        }
 
         window.display(); 
     }
