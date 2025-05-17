@@ -15,60 +15,35 @@
 #include "headers/cell.hpp"
 
 
-sf::VertexArray drawGrid(sf::RenderWindow& win, int rows, int cols){
-    // initialize values
-    int numLines = rows+cols-2;
-    sf::VertexArray grid(sf::PrimitiveType::Lines, 2*(numLines));
-    win.setView(win.getDefaultView());
-    auto size = win.getView().getSize();
-    float rowH = size.y/rows;
-    float colW = size.x/cols;
-    // row separators
-    for(int i=0; i < rows-1; i++){
-        int r = i+1;
-        float rowY = rowH*r;
-        grid[i*2].position = {0, rowY};
-        grid[i*2+1].position = {size.x, rowY};
-    }
-    // column separators
-    for(int i=rows-1; i < numLines; i++){
-        int c = i-rows+2;
-        float colX = colW*c;
-        grid[i*2].position = {colX, 0};
-        grid[i*2+1].position = {colX, size.y};
-    }
-
-    return grid; 
-}
-
 int main()
 {
-    /****** CREATING ALL GAME OBJECTS ******/
+    const sf::Vector2u screenSize(550, 700); 
+    const sf::Vector2f blockSize(30, 30); 
+    const sf::Vector2f boardSize(300, 600); 
+
+
+    /****** CREATING ALL STATIC GAME OBJECTS ******/
     // render the main window 
-    sf::RenderWindow window(sf::VideoMode({525, 675}), "Tetris by Daniel ;3");
+    sf::RenderWindow window(sf::VideoMode(screenSize), "Tetris by Daniel ;3");
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);
 
     // creating boards and objects where gameplay will happen
-    auto board = std::make_unique<sf::RectangleShape>(sf::Vector2f(300, 575)); 
+    auto board = std::make_unique<sf::RectangleShape>(boardSize); 
     board->setFillColor(GRAY);
     board->setPosition({30, 75});
 
-    int gridRows = 24; 
-    int gridCols = 10; 
-    auto grid = std::make_unique<sf::RectangleShape>(drawGrid(window, gridRows, gridCols)); 
-    
     auto nextPiece = std::make_unique<sf::RectangleShape>(sf::Vector2f(150, 150));
     nextPiece->setFillColor(GRAY);
-    nextPiece->setPosition({350, 75});
+    nextPiece->setPosition({375, 75});
 
     auto next3Pieces = std::make_unique<sf::RectangleShape>(sf::Vector2f(100, 300));
     next3Pieces->setFillColor(GRAY);
-    next3Pieces->setPosition({375, 240});
+    next3Pieces->setPosition({400, 240});
 
     auto holdPiece = std::make_unique<sf::RectangleShape>(sf::Vector2f(100, 100));
     holdPiece->setFillColor(GRAY);
-    holdPiece->setPosition({375, 550});
+    holdPiece->setPosition({400, 550});
 
     auto restartButton = std::make_unique<sf::RectangleShape>(sf::Vector2f(50, 30)); 
     restartButton->setFillColor(LIGHT_GRAY);
@@ -199,8 +174,14 @@ int main()
                 }
             }
         }
+ 
+        for (int i = 0; i < (screenSize.x / blockSize.x); i++) { 
+            for(int j = 0; j < (screenSize.y / blockSize.y); j++) {
+                
+            }
+        }
 
-        window.clear(); 
+        window.clear();  
 
         window.draw(*board); 
         window.draw(*nextPiece); 
@@ -212,7 +193,40 @@ int main()
         window.draw(*pauseText); 
         window.draw(*score); 
         window.draw(*pauseIconHolder); 
-        window.draw(*grid); 
+
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 20; j++) {
+                sf::VertexArray tile(sf::PrimitiveType::LineStrip, 5); 
+                // the position of the board's top left corner is at 30x75, and so that's where the tiles will originate
+                // the dimensions of the board are 300x600, and each tile is supposed to be 30x30
+                tile[0].position = sf::Vector2f((30 + (i * 30)), (75 + (j * 30))); 
+                tile[1].position = sf::Vector2f((60 + (i * 30)), (75 + (j * 30))); 
+                tile[2].position = sf::Vector2f((60 + (i * 30)), (105 + (j * 30))); 
+                tile[3].position = sf::Vector2f((30 + (i * 30)), (105 + (j * 30))); 
+                tile[4].position = sf::Vector2f((30 + (i * 30)), (75 + (j * 30))); 
+
+                tile[0].color = sf::Color::White; 
+                tile[1].color = sf::Color::White; 
+                tile[2].color = sf::Color::White; 
+                tile[3].color = sf::Color::White; 
+                tile[4].color = sf::Color::White; 
+
+                window.draw(tile); 
+            }
+        }
+
+        /*
+        sf::VertexArray triangle(sf::PrimitiveType::LineStrip, 3); 
+        triangle[0].position = sf::Vector2f(10, 10); 
+        triangle[1].position = sf::Vector2f(100, 10);
+        triangle[2].position = sf::Vector2f(100, 100);
+        
+        triangle[0].color = sf::Color::White; 
+        triangle[1].color = sf::Color::White; 
+        triangle[2].color = sf::Color::White; 
+        
+        window.draw(triangle);
+        */
 
         window.display(); 
     }
