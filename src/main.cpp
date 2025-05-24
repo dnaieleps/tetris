@@ -3,6 +3,7 @@
 #include <vector>
 #include <queue>
 #include <memory>
+#include <random>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Font.hpp>
@@ -14,13 +15,11 @@
 #include "headers/piece.hpp"
 #include "headers/cell.hpp"
 
-
 int main()
 {
     const sf::Vector2u screenSize(550, 700); 
     const sf::Vector2f blockSize(30, 30); 
     const sf::Vector2f boardSize(300, 600); 
-
 
     /****** CREATING ALL STATIC GAME OBJECTS ******/
     // render the main window 
@@ -97,18 +96,16 @@ int main()
     
     /***** END OF CREATING GAME OBJECTS *****/
 
-
-
-    // initializing game 
+    // initializing the game instance 
     Game* game = new Game();
-
-    // main application loop 
+    
+   /*** START OF GAME APPLICATION LOOP ***/
     while (window.isOpen()) {
 
         // handles all game events and game updates 
         while (const std::optional event = window.pollEvent()) {
             // updates that occur regardless of user input (gameloop)
-
+            
 
             
             // updates that happen only when prompted by user input (events)
@@ -134,6 +131,7 @@ int main()
                     }
 
                 }
+                /*** END OF MOUSE CLICK EVENT HANDLING ***/
 
 
                 /*** ALL KEYPRESS EVENTS ***/
@@ -157,6 +155,7 @@ int main()
                             main(); 
                             break;
                         case sf::Keyboard::Scancode::W: // rotate cw
+                            
                             break;
                         case sf::Keyboard::Scancode::A: // move left
                             break;
@@ -183,8 +182,11 @@ int main()
                             break;
                     }
                 }
+                /*** END OF KEYPRESS EVENT HANDLING ***/
             }
         }
+
+        
 
         /*** DRAWING EVERYTHING TO SCREEN ***/
         window.clear();  
@@ -218,14 +220,16 @@ int main()
         }
 
         // drawing all the tiles from the cell grid onto the screen
-        for (std::array<Cell*, 10> row : game->getGrid()) {
-            for (Cell* t : row) {
+        for (std::array<std::unique_ptr<Cell>, 10> &row : game->grid) {
+            for (std::unique_ptr<Cell> &t : row) {
                 window.draw(t->getCover()); 
             }
         }
 
         window.display(); 
+        /*** END OF DRAWING TO SCREEN ***/
     }
+    /*** END OF GAME APPLICATION LOOP ***/
 
     delete game; 
     delete textures; 

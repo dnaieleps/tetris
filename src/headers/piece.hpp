@@ -23,14 +23,14 @@
 class Piece { 
 private:
     int type;
-    std::array<std::array<Cell*, 3>, 4>* pieceGrid; 
-    sf::Color* color; 
+    sf::Color *color; 
+    std::array<std::array<std::unique_ptr<Cell>, 3>, 4> pieceGrid;
 
 public:
     Piece() = default;
     Piece(int type_);
     ~Piece();
     int getType(); 
-    std::array<std::array<Cell*, 3>, 4>* getPieceGrid();
+    const std::array<std::array<std::unique_ptr<Cell>, 3>, 4>& getPieceGrid() const;
     bool operator==(const Piece& other); 
 };

@@ -12,5 +12,6 @@ public:
     ~Cell() = default; 
     bool getFilled(); 
     bool changeFilled(); 
-    sf::RectangleShape getCover(); 
+    sf::RectangleShape& getCover(); 
+    sf::RectangleShape& setCover(sf::RectangleShape& newcover); 
 };

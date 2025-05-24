@@ -2,8 +2,9 @@
 
 Piece::Piece(int type_){
     type = type_;  
-    sf::Color* tempColor; 
-
+    sf::Color tempColor; 
+    sf::RectangleShape tempCover; 
+    pieceGrid = std::array<std::array<std::unique_ptr<Cell>, 3>, 4>(); 
 
     /* visualization of the pieceGrid, where all of the piece types can be constructed from 
     *           [[*, *, *], 
@@ -13,43 +14,48 @@ Piece::Piece(int type_){
     */
     switch (type) {
         case 0: // "empty" piece (used for default heldpiece Piece)
-            tempColor = new LIGHT_GRAY;
+            tempColor = LIGHT_GRAY;
+            tempCover.setFillColor(tempColor);  
+
+            for (auto &a : pieceGrid) {
+                for (auto &cell : a) {
+                    cell = std::make_unique<Cell>(tempCover); 
+                }
+            }
+            break; 
         case 1: // I 
-            tempColor = new LIGHT_BLUE; 
-            (*pieceGrid)[0][1]->getCover().setFillColor(*tempColor); 
-            (*pieceGrid)[1][1]->getCover().setFillColor(*tempColor); 
-            (*pieceGrid)[2][1]->getCover().setFillColor(*tempColor); 
-            (*pieceGrid)[3][1]->getCover().setFillColor(*tempColor); 
-
-            (*pieceGrid)[0][1]->changeFilled();  
-            (*pieceGrid)[1][1]->changeFilled();  
-            (*pieceGrid)[2][1]->changeFilled();  
-            (*pieceGrid)[3][1]->changeFilled();  
+            tempColor = LIGHT_BLUE; 
+            break; 
         case 2: // O
-            tempColor = new YELLOW;
+            tempColor = YELLOW;
+            break; 
         case 3: // L
-            tempColor = new ORANGE;
+            tempColor = ORANGE;
+            break; 
         case 4: // J 
-            tempColor = new DARK_BLUE;
+            tempColor = DARK_BLUE;
+            break; 
         case 5: // Z
-            tempColor = new RED;
+            tempColor = RED;
+            break; 
         case 6: // S
-            tempColor = new GREEN;
+            tempColor = GREEN;
+            break; 
         case 7: // T
-            tempColor = new PURPLE;
+            tempColor = PURPLE;
+            break; 
         default: // exception catcher
+            tempColor = LIGHT_GRAY; 
+            break; 
     }
-
-    delete tempColor; 
 }
 Piece::~Piece(){
-    delete pieceGrid; 
     delete color; 
 }
 int Piece::getType() {
     return type; 
 }
-std::array<std::array<Cell*, 3>, 4>* Piece::getPieceGrid() {
+const std::array<std::array<std::unique_ptr<Cell>, 3>, 4>& Piece::getPieceGrid() const {
     return pieceGrid; 
 }
 bool Piece::operator==(const Piece& other) {

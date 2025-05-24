@@ -15,17 +15,18 @@
 *   @justSwapped -> boolean representing whether or not the piece in question was just swapped out of the held box, preventing swap spamming
 */
 class Game {
-private: 
-    std::queue<Piece>* pieceQueue; 
-    Piece* currentPiece, *heldPiece; 
-    std::array<std::array<Cell*, 10>, 20>* grid; 
+private:
     int score;
     int tickSpeed;
     bool paused, gameOver, justSwapped;
+    std::unique_ptr<Piece> currentPiece, heldPiece; 
 
 public: 
+    std::queue<std::unique_ptr<Piece>> pieceQueue; 
+    std::array<std::array<std::unique_ptr<Cell>, 10>, 20> grid; 
+
     Game(); // Game constructor
-    ~Game(); // Game destructor
+    ~Game() = default; // Game destructor 
     int getScore(); // returns current player score
     int increaseScore(int amt); // increments player score by given amount
     int getTickSpeed(); // returns game's current tick speed
@@ -35,12 +36,12 @@ public:
     bool gameIsOver(); // returns whether or not the game is over, meaning the player lost
     bool changeGameOver(); // changes the gameOver variable to be true, ending the game
     bool hasJustSwapped(); // returns whether or not the player has just swapped a piece. put in place so you can't spam swap
-    Piece getCurrentPiece(); // returns the current piece in play 
-    Piece getNextPiece(); // pops the top value off of the pieceQueue to be displayed onto the game screen
-    Piece generateNewPiece(); // generates a new piece to be added to the back of the pieceQueue to maintain constant queue size
+    Piece& getCurrentPiece(); // returns the current piece in play 
+    std::array<std::array<std::unique_ptr<Cell>, 10>, 20>& getGrid(); // returns the address of the game grid 
+    Piece& getNextPiece(); // pops the top value off of the pieceQueue to be displayed onto the game screen
+    void addRandomPieceToQueue(); // helper function that adds a random Piece to the pieceQueue
     void swapHeldPiece(); // swaps the held piece with the piece that is currently in play
     void updateScore(); // updates the score every gametick
-    std::array<std::array<Cell*, 10>, 20>& getGrid(); // returns the address of the game grid 
     void spawnPiece(Piece& piece); // copies the passed Piece's pieceGrid onto the spawnpoint of the game grid (top middle)
     void movePiece(sf::Keyboard::Scancode key); // moves the copied piece along the board as signified by the arrow that is entered
 };

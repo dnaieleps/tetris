@@ -13,6 +13,10 @@ bool Cell::changeFilled() {
     filled = !filled; 
     return filled; 
 }
-sf::RectangleShape Cell::getCover() {
+sf::RectangleShape& Cell::getCover() {
+    return cover; 
+}
+sf::RectangleShape& Cell::setCover(sf::RectangleShape& newcover) {
+    cover = newcover; 
     return cover; 
 }
