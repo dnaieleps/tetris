@@ -7,15 +7,15 @@ Game::Game() {
     score = 0; 
     tickSpeed = 1; 
     paused = gameOver = justSwapped = false; 
-    currentPiece = std::make_unique<Piece>(0); 
-    heldPiece = std::make_unique<Piece>(0); 
+    currentPiece = new Piece(0); 
+    heldPiece = new Piece(0); 
     
     // initializing the pieceQueue
     for (int i = 0; i < 6; i++) {
         addRandomPieceToQueue(); 
     }
 
-    // initializing empty cells across the grid with default cell color 
+    // initializing empty cells across the grid with default cell color
     for (int i = 0; i < grid.size(); i++) {
         for (int j = 0; j < grid[i].size(); j++) {
             sf::RectangleShape temp({29, 29}); 
@@ -23,7 +23,22 @@ Game::Game() {
             temp.setSize(Cell::cellDimensions); 
             temp.setPosition(sf::Vector2f({static_cast<float>(30 + (j * 29 + j)), static_cast<float>(76 + (i * 29 + i))})); 
 
-            grid[i][j] = std::make_unique<Cell>(temp); 
+            grid[i][j] = new Cell(temp); 
+        }
+    }
+}
+Game::~Game() {
+    delete currentPiece; 
+    delete heldPiece; 
+
+    while (!pieceQueue.empty()) {
+        delete pieceQueue.front(); 
+        pieceQueue.pop(); 
+    }
+
+    for (std::array<Cell*, 10> a : grid) {
+        for (Cell* c : a) {
+            delete c; 
         }
     }
 }
@@ -59,7 +74,10 @@ bool Game::hasJustSwapped() {
 Piece& Game::getCurrentPiece() {
     return *currentPiece; 
 }
-std::array<std::array<std::unique_ptr<Cell>, 10>, 20>& Game::getGrid() {
+Piece& Game::getHeldPiece() {
+    return *heldPiece; 
+}
+std::array<std::array<Cell*, 10>, 20>& Game::getGrid() {
     return grid; 
 }
 Piece& Game::getNextPiece() {
@@ -73,20 +91,32 @@ void Game::addRandomPieceToQueue() {
     std::uniform_int_distribution<> distr(1, 7); 
     int randomNumber = distr(gen); 
     
-    auto randomPiece = std::make_unique<Piece>(randomNumber);
-    pieceQueue.push(std::move(randomPiece)); 
+    auto randomPiece = new Piece(randomNumber);
+    pieceQueue.push(randomPiece); 
 }
 void Game::spawnPiece(Piece& piece) {
     // [0][3] == [0][0] (grid -> pieceGrid) (top left corner)
     // [3][5] == [3][2] (grid -> pieceGrid) (bottom right corner)
+
+    // pro tip: you have to copy over the position of the grid board cell as well as the information
+    /** Example 
+        sf::RectangleShape tempCover(Cell::cellDimensions); 
+        tempCover.setPosition(grid[0][0]->getCover().getPosition()); 
+        tempCover.setFillColor(sf::Color::White); 
+        grid[0][0]->setCover(tempCover); 
+    */
     
     int pRow = 0; int pCol = 0; 
     for (int i = 0; i < 4; i++) {
         pCol = 0; 
         for (int j = 3; j < 6; j++) {
-            const auto& temp = piece.getPieceGrid()[pRow][pCol];
-            if (temp) {
-                grid[i][j] = std::make_unique<Cell>(*temp); 
+            if (piece.getPieceGrid()[pRow][pCol] != nullptr) {
+                sf::RectangleShape temp(Cell::cellDimensions); 
+                temp.setFillColor(piece.getPieceGrid()[pRow][pCol]->getCover().getFillColor()); 
+                temp.setPosition(grid[i][j]->getCover().getPosition()); 
+
+                grid[i][j]->setCover(temp); 
+                grid[i][j]->changeFilled(); 
             }
             pCol++; 
         }

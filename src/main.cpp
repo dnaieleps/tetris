@@ -28,29 +28,29 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // creating boards and objects where gameplay will happen
-    auto board = std::make_unique<sf::RectangleShape>(boardSize); 
-    board->setFillColor(GRAY);
-    board->setPosition({30, 75});
+    sf::RectangleShape board(boardSize); 
+    board.setFillColor(GRAY);
+    board.setPosition({30, 75});
 
-    auto nextPiece = std::make_unique<sf::RectangleShape>(sf::Vector2f(150, 150));
-    nextPiece->setFillColor(GRAY);
-    nextPiece->setPosition({375, 75});
+    sf::RectangleShape nextPiece(sf::Vector2f(150, 150));
+    nextPiece.setFillColor(GRAY);
+    nextPiece.setPosition({375, 75});
 
-    auto next3Pieces = std::make_unique<sf::RectangleShape>(sf::Vector2f(100, 300));
-    next3Pieces->setFillColor(GRAY);
-    next3Pieces->setPosition({400, 240});
+    sf::RectangleShape next3Pieces(sf::Vector2f(100, 300));
+    next3Pieces.setFillColor(GRAY);
+    next3Pieces.setPosition({400, 240});
 
-    auto holdPiece = std::make_unique<sf::RectangleShape>(sf::Vector2f(100, 100));
-    holdPiece->setFillColor(GRAY);
-    holdPiece->setPosition({400, 550});
+    sf::RectangleShape holdPiece(sf::Vector2f(100, 100));
+    holdPiece.setFillColor(GRAY);
+    holdPiece.setPosition({400, 550});
 
-    auto restartButton = std::make_unique<sf::RectangleShape>(sf::Vector2f(50, 30)); 
-    restartButton->setFillColor(LIGHT_GRAY);
-    restartButton->setPosition({30, 25}); 
+    sf::RectangleShape restartButton(sf::Vector2f(50, 30)); 
+    restartButton.setFillColor(LIGHT_GRAY);
+    restartButton.setPosition({30, 25}); 
 
-    auto pauseButton = std::make_unique<sf::RectangleShape>(sf::Vector2f(50, 30));
-    pauseButton->setFillColor(LIGHT_GRAY); 
-    pauseButton->setPosition({95, 25});
+    sf::RectangleShape pauseButton(sf::Vector2f(50, 30));
+    pauseButton.setFillColor(LIGHT_GRAY); 
+    pauseButton.setPosition({95, 25});
 
     // universal font to be used for all text in game
     sf::Font arial; 
@@ -59,40 +59,40 @@ int main()
     }
 
      // text for restart button 
-    auto restartText = std::make_unique<sf::Text>(arial);
-    restartText->setString("restart");
-    restartText->setCharacterSize(13);
-    restartText->setPosition({35, 30});
-    restartText->setFillColor(sf::Color::Black);
+    sf::Text restartText(arial); 
+    restartText.setString("restart");
+    restartText.setCharacterSize(13);
+    restartText.setPosition({35, 30});
+    restartText.setFillColor(sf::Color::Black);
 
     // text for pause button 
-    auto pauseText = std::make_unique<sf::Text>(arial);
-    pauseText->setString("pause");
-    pauseText->setCharacterSize(13);
-    pauseText->setPosition({100, 30});
-    pauseText->setFillColor(sf::Color::Black);
+    sf::Text pauseText(arial); 
+    pauseText.setString("pause");
+    pauseText.setCharacterSize(13);
+    pauseText.setPosition({100, 30});
+    pauseText.setFillColor(sf::Color::Black);
 
     // text that will represent the score 
-    auto score = std::make_unique<sf::Text>(arial);
-    score->setString("Score: ");
-    score->setCharacterSize(20); 
-    score->setPosition({200, 30});    
-    score->setFillColor(sf::Color::White);
-    score->setStyle(sf::Text::Bold);
+    sf::Text score(arial); 
+    score.setString("Score: ");
+    score.setCharacterSize(20); 
+    score.setPosition({200, 30});    
+    score.setFillColor(sf::Color::White);
+    score.setStyle(sf::Text::Bold);
 
     // loading in pause icon texture from file
-    auto textures = new std::vector<std::unique_ptr<sf::Texture>>();
-    auto pauseTexture = std::make_unique<sf::Texture>(); 
+    auto textures = new std::vector<sf::Texture*>();
+    auto pauseTexture = new sf::Texture(); 
     if(!pauseTexture->loadFromFile("../resources/pause.png")) {
         std::cerr << "Error: could not load image from file" << std::endl; 
     }
 
     // creating sprite where pauseTexture will be placed
-    auto pauseIconHolder = std::make_unique<sf::Sprite>(*pauseTexture);
-    pauseIconHolder->setPosition({(525 - 200) / 2, (675 - 200) / 2});
-    pauseIconHolder->setScale({0.4, 0.4}); 
-    pauseIconHolder->setColor(sf::Color(255, 255, 255, 0)); 
-    textures->push_back(std::move(pauseTexture));
+    sf::Sprite pauseIconHolder(*pauseTexture); 
+    pauseIconHolder.setPosition({(525 - 200) / 2, (675 - 200) / 2});
+    pauseIconHolder.setScale({0.4, 0.4}); 
+    pauseIconHolder.setColor(sf::Color(255, 255, 255, 0)); 
+    textures->push_back(pauseTexture);
     
     /***** END OF CREATING GAME OBJECTS *****/
 
@@ -118,14 +118,14 @@ int main()
                     auto mousePos = sf::Mouse::getPosition(window); 
                     auto mousePosVec = sf::Vector2f({static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)}); 
 
-                    if (pauseButton->getGlobalBounds().contains(mousePosVec)) {
-                        if (pauseIconHolder->getColor() == sf::Color(255, 255, 255, 128)) { // if pause is already activated
+                    if (pauseButton.getGlobalBounds().contains(mousePosVec)) {
+                        if (pauseIconHolder.getColor() == sf::Color(255, 255, 255, 128)) { // if pause is already activated
                             game->changePause();
-                            pauseIconHolder->setColor(sf::Color(255, 255, 255, 0)); 
+                            pauseIconHolder.setColor(sf::Color(255, 255, 255, 0)); 
                         } else { 
-                            pauseIconHolder->setColor(sf::Color(255, 255, 255, 128)); 
+                            pauseIconHolder.setColor(sf::Color(255, 255, 255, 128)); 
                         }
-                    } else if (restartButton->getGlobalBounds().contains(mousePosVec)) {
+                    } else if (restartButton.getGlobalBounds().contains(mousePosVec)) {
                         window.close(); 
                         main(); 
                     }
@@ -142,12 +142,12 @@ int main()
                         case sf::Keyboard::Scancode::Escape: // close window
                             window.close(); 
                             break;
-                        case sf::Keyboard::Scancode::P: // pause
-                            if (pauseIconHolder->getColor() == sf::Color(255, 255, 255, 128)) { // if pause is already activated
+                        case sf::Keyboard::Scancode::Tab: // pause
+                            if (pauseIconHolder.getColor() == sf::Color(255, 255, 255, 128)) { // if pause is already activated
                                 game->changePause();
-                                pauseIconHolder->setColor(sf::Color(255, 255, 255, 0)); 
+                                pauseIconHolder.setColor(sf::Color(255, 255, 255, 0)); 
                             } else { 
-                                pauseIconHolder->setColor(sf::Color(255, 255, 255, 128)); 
+                                pauseIconHolder.setColor(sf::Color(255, 255, 255, 128)); 
                             }
                             break;
                         case sf::Keyboard::Scancode::R: // restart game
@@ -155,7 +155,6 @@ int main()
                             main(); 
                             break;
                         case sf::Keyboard::Scancode::W: // rotate cw
-                            
                             break;
                         case sf::Keyboard::Scancode::A: // move left
                             break;
@@ -177,6 +176,35 @@ int main()
                             break;
                         case sf::Keyboard::Scancode::Space: // hard drop
                             break;
+
+
+                        /*** DEBUGGING COMMANDS ***/
+                        case sf::Keyboard::Scancode::I: // debugging
+                            std::cout << "contents of queue: "; 
+                            if (game->pieceQueue.empty()) {
+                                std::cout << "nothing! it is empty" << std::endl; 
+                            } else { 
+                                // making temporary copy of the game's pieceQueue cus i wanna keep the actual values of the queue
+                                std::queue<Piece*> tempQueue = game->pieceQueue; 
+                                while (!tempQueue.empty()) {
+                                    std::cout << tempQueue.front()->getType() << ", "; 
+                                    tempQueue.pop(); 
+                                }
+                            }
+                            std::cout << std::endl; 
+                            break; 
+                        case sf::Keyboard::Scancode::O: // debugging
+                            game->spawnPiece(*(game->pieceQueue.front())); 
+                            game->pieceQueue.pop(); 
+                            break; 
+                        case sf::Keyboard::Scancode::P: // debugging
+                            std::cout << "adding value to top of queue"; 
+                            game->addRandomPieceToQueue(); 
+                            std::cout << std::endl; 
+                            break; 
+                        /*** END OF DEBUGGING COMMANDS ***/
+
+                        
                         default: 
                             std::cout << "no command exists for this key yet!" << std::endl; 
                             break;
@@ -191,16 +219,16 @@ int main()
         /*** DRAWING EVERYTHING TO SCREEN ***/
         window.clear();  
 
-        window.draw(*board); 
-        window.draw(*nextPiece); 
-        window.draw(*next3Pieces); 
-        window.draw(*holdPiece); 
-        window.draw(*restartButton); 
-        window.draw(*pauseButton); 
-        window.draw(*restartText); 
-        window.draw(*pauseText); 
-        window.draw(*score); 
-        window.draw(*pauseIconHolder); 
+        window.draw(board); 
+        window.draw(nextPiece); 
+        window.draw(next3Pieces); 
+        window.draw(holdPiece); 
+        window.draw(restartButton); 
+        window.draw(pauseButton); 
+        window.draw(restartText); 
+        window.draw(pauseText); 
+        window.draw(score); 
+        window.draw(pauseIconHolder); 
 
         // building the grid where the blocks will all be placed
         for (int i = 0; i < 10; i++) {
@@ -220,8 +248,8 @@ int main()
         }
 
         // drawing all the tiles from the cell grid onto the screen
-        for (std::array<std::unique_ptr<Cell>, 10> &row : game->grid) {
-            for (std::unique_ptr<Cell> &t : row) {
+        for (std::array<Cell*, 10> &row : game->grid) {
+            for (Cell* t : row) {
                 window.draw(t->getCover()); 
             }
         }

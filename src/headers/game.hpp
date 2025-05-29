@@ -19,14 +19,14 @@ private:
     int score;
     int tickSpeed;
     bool paused, gameOver, justSwapped;
-    std::unique_ptr<Piece> currentPiece, heldPiece; 
+    Piece* currentPiece, *heldPiece;
 
 public: 
-    std::queue<std::unique_ptr<Piece>> pieceQueue; 
-    std::array<std::array<std::unique_ptr<Cell>, 10>, 20> grid; 
+    std::queue<Piece*> pieceQueue; 
+    std::array<std::array<Cell*, 10>, 20> grid; 
 
     Game(); // Game constructor
-    ~Game() = default; // Game destructor 
+    ~Game(); // Game destructor 
     int getScore(); // returns current player score
     int increaseScore(int amt); // increments player score by given amount
     int getTickSpeed(); // returns game's current tick speed
@@ -37,7 +37,8 @@ public:
     bool changeGameOver(); // changes the gameOver variable to be true, ending the game
     bool hasJustSwapped(); // returns whether or not the player has just swapped a piece. put in place so you can't spam swap
     Piece& getCurrentPiece(); // returns the current piece in play 
-    std::array<std::array<std::unique_ptr<Cell>, 10>, 20>& getGrid(); // returns the address of the game grid 
+    Piece& getHeldPiece(); // returns the held piece in the held box (bottom right)
+    std::array<std::array<Cell*, 10>, 20>& getGrid(); // returns the address of the game grid 
     Piece& getNextPiece(); // pops the top value off of the pieceQueue to be displayed onto the game screen
     void addRandomPieceToQueue(); // helper function that adds a random Piece to the pieceQueue
     void swapHeldPiece(); // swaps the held piece with the piece that is currently in play
