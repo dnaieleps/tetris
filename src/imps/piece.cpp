@@ -6,11 +6,14 @@ Piece::Piece(int type_){
     sf::RectangleShape tempCover(Cell::cellDimensions); 
     pieceGrid = std::array<std::array<Cell*, 3>, 4>(); 
 
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 3; j++) {
-            pieceGrid[i][j] = new Cell(tempCover);
+    
+    for (auto &r : pieceGrid) {
+        for (auto &cell : r) {
+            tempCover.setFillColor(GRAY); 
+            cell = new Cell(tempCover); 
         }
     }
+    
     /****************************************************************************************
     *  visualization of the pieceGrid, where all of the piece types can be constructed from 
     *           [[*, *, *], 
@@ -44,6 +47,7 @@ Piece::Piece(int type_){
             pieceGrid[3][2]->setCover(temp);
             break; 
         case 4: // J
+            temp.setFillColor(DARK_BLUE);
             pieceGrid[1][1]->setCover(temp);
             pieceGrid[2][1]->setCover(temp);
             pieceGrid[3][1]->setCover(temp);
@@ -55,6 +59,7 @@ Piece::Piece(int type_){
             pieceGrid[2][1]->setCover(temp);
             pieceGrid[3][1]->setCover(temp);
             pieceGrid[3][2]->setCover(temp);
+            break;
         case 6: // S
             temp.setFillColor(GREEN);
             pieceGrid[3][0]->setCover(temp);
@@ -71,13 +76,15 @@ Piece::Piece(int type_){
             break; 
         default: // exception catcher
             temp.setFillColor(LIGHT_GRAY);
-            
+            for (auto &r : pieceGrid) {
+                for (auto &cell : r) {
+                    cell->setCover(temp); 
+                }
+            }
             break; 
     }
 }
 Piece::~Piece(){
-    delete color; 
-
     for (const auto &p : pieceGrid) {
         for (auto *cell : p) {
             delete cell; 

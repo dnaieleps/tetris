@@ -23,7 +23,6 @@
 class Piece { 
 private:
     int type;
-    sf::Color *color; 
     std::array<std::array<Cell*, 3>, 4> pieceGrid;
 
 public:

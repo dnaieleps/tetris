@@ -18,7 +18,6 @@
 int main()
 {
     const sf::Vector2u screenSize(550, 700); 
-    const sf::Vector2f blockSize(30, 30); 
     const sf::Vector2f boardSize(300, 600); 
 
     /****** CREATING ALL STATIC GAME OBJECTS ******/
@@ -40,9 +39,9 @@ int main()
     next3Pieces.setFillColor(GRAY);
     next3Pieces.setPosition({400, 240});
 
-    sf::RectangleShape holdPiece(sf::Vector2f(100, 100));
-    holdPiece.setFillColor(GRAY);
-    holdPiece.setPosition({400, 550});
+    sf::RectangleShape heldPiece(sf::Vector2f(100, 100));
+    heldPiece.setFillColor(GRAY);
+    heldPiece.setPosition({400, 550});
 
     sf::RectangleShape restartButton(sf::Vector2f(50, 30)); 
     restartButton.setFillColor(LIGHT_GRAY);
@@ -195,6 +194,7 @@ int main()
                             break; 
                         case sf::Keyboard::Scancode::O: // debugging
                             game->spawnPiece(*(game->pieceQueue.front())); 
+                            delete game->pieceQueue.front(); 
                             game->pieceQueue.pop(); 
                             break; 
                         case sf::Keyboard::Scancode::P: // debugging
@@ -222,7 +222,7 @@ int main()
         window.draw(board); 
         window.draw(nextPiece); 
         window.draw(next3Pieces); 
-        window.draw(holdPiece); 
+        window.draw(heldPiece); 
         window.draw(restartButton); 
         window.draw(pauseButton); 
         window.draw(restartText); 
@@ -246,6 +246,22 @@ int main()
                 window.draw(tile); 
             }
         }
+
+        // building the mini grid where the heldPiece will live 
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 3; j++) {
+                sf::VertexArray tile(sf::PrimitiveType::LineStrip, 5); 
+                // the position of heldPiece's top left corner is at 
+            }
+        }
+
+        // building the mini grid where the next3Pieces will live 
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 3; j++) {
+                
+            }
+        }
+
 
         // drawing all the tiles from the cell grid onto the screen
         for (std::array<Cell*, 10> &row : game->grid) {

@@ -6,7 +6,7 @@ Cell::Cell(sf::RectangleShape& cover_) {
     cover = cover_; 
     filled = false; 
 }
-bool Cell::getFilled() {
+bool Cell::isFilled() {
     return filled; 
 }
 bool Cell::changeFilled() {

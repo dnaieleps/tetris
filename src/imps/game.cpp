@@ -18,9 +18,8 @@ Game::Game() {
     // initializing empty cells across the grid with default cell color
     for (int i = 0; i < grid.size(); i++) {
         for (int j = 0; j < grid[i].size(); j++) {
-            sf::RectangleShape temp({29, 29}); 
-            temp.setFillColor(sf::Color(73, 80, 89, 128)); 
-            temp.setSize(Cell::cellDimensions); 
+            sf::RectangleShape temp(Cell::cellDimensions); 
+            temp.setFillColor(GRAY); 
             temp.setPosition(sf::Vector2f({static_cast<float>(30 + (j * 29 + j)), static_cast<float>(76 + (i * 29 + i))})); 
 
             grid[i][j] = new Cell(temp); 
@@ -97,26 +96,20 @@ void Game::addRandomPieceToQueue() {
 void Game::spawnPiece(Piece& piece) {
     // [0][3] == [0][0] (grid -> pieceGrid) (top left corner)
     // [3][5] == [3][2] (grid -> pieceGrid) (bottom right corner)
-
-    // pro tip: you have to copy over the position of the grid board cell as well as the information
-    /** Example 
-        sf::RectangleShape tempCover(Cell::cellDimensions); 
-        tempCover.setPosition(grid[0][0]->getCover().getPosition()); 
-        tempCover.setFillColor(sf::Color::White); 
-        grid[0][0]->setCover(tempCover); 
-    */
     
     int pRow = 0; int pCol = 0; 
     for (int i = 0; i < 4; i++) {
         pCol = 0; 
         for (int j = 3; j < 6; j++) {
+            // sf::RectangleShape temp(Cell::cellDimensions);
+            sf::RectangleShape temp(Cell::cellDimensions); 
             if (piece.getPieceGrid()[pRow][pCol] != nullptr) {
-                sf::RectangleShape temp(Cell::cellDimensions); 
                 temp.setFillColor(piece.getPieceGrid()[pRow][pCol]->getCover().getFillColor()); 
-                temp.setPosition(grid[i][j]->getCover().getPosition()); 
+                temp.setPosition(grid[i][j]->getCover().getPosition());  
+                
 
-                grid[i][j]->setCover(temp); 
-                grid[i][j]->changeFilled(); 
+                grid[i][j]->setCover(temp);
+                grid[i][j]->changeFilled();  
             }
             pCol++; 
         }
@@ -124,7 +117,13 @@ void Game::spawnPiece(Piece& piece) {
     }
 }
 void Game::swapHeldPiece() {
+    if (justSwapped) {
+        
+    } else { 
+
+    }
     
+    justSwapped = !justSwapped; 
 }
 void Game::updateScore() {
 
