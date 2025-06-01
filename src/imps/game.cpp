@@ -107,7 +107,6 @@ void Game::spawnPiece(Piece& piece) {
                 temp.setFillColor(piece.getPieceGrid()[pRow][pCol]->getCover().getFillColor()); 
                 temp.setPosition(grid[i][j]->getCover().getPosition());  
                 
-
                 grid[i][j]->setCover(temp);
                 grid[i][j]->changeFilled();  
             }
@@ -118,7 +117,7 @@ void Game::spawnPiece(Piece& piece) {
 }
 void Game::swapHeldPiece() {
     if (justSwapped) {
-        
+
     } else { 
 
     }
@@ -127,7 +126,7 @@ void Game::swapHeldPiece() {
 }
 void Game::updateScore() {
 
-}
+} 
 void Game::movePiece(sf::Keyboard::Scancode key) {
 
 }

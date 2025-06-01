@@ -1,6 +1,7 @@
 #include "../headers/cell.hpp"
 
 const sf::Vector2f Cell::cellDimensions = sf::Vector2f({28, 28}); 
+const sf::Vector2f Cell::miniCellDimensions = sf::Vector2f({19, 19}); 
 
 Cell::Cell(sf::RectangleShape& cover_) {
     cover = cover_; 

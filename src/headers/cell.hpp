@@ -7,6 +7,7 @@ private:
     bool filled; 
 public: 
     const static sf::Vector2f cellDimensions; 
+    const static sf::Vector2f miniCellDimensions; 
     Cell() = default; 
     Cell(sf::RectangleShape& cover_);
     ~Cell() = default; 

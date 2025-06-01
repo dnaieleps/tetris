@@ -35,13 +35,13 @@ int main()
     nextPiece.setFillColor(GRAY);
     nextPiece.setPosition({375, 75});
 
-    sf::RectangleShape next3Pieces(sf::Vector2f(100, 300));
+    sf::RectangleShape next3Pieces(sf::Vector2f(100, 320));
     next3Pieces.setFillColor(GRAY);
     next3Pieces.setPosition({400, 240});
 
     sf::RectangleShape heldPiece(sf::Vector2f(100, 100));
     heldPiece.setFillColor(GRAY);
-    heldPiece.setPosition({400, 550});
+    heldPiece.setPosition({400, 575});
 
     sf::RectangleShape restartButton(sf::Vector2f(50, 30)); 
     restartButton.setFillColor(LIGHT_GRAY);
@@ -235,30 +235,79 @@ int main()
             for (int j = 0; j < 20; j++) {
                 sf::VertexArray tile(sf::PrimitiveType::LineStrip, 5); 
                 // the position of the board's top left corner is at 30x75, and so that's where the tiles will originate
-                // the dimensions of the board are 300x600, and each tile is supposed to be 30x30
-                tile[0].position = sf::Vector2f((30 + (i * 30)), (75 + (j * 30))); 
-                tile[1].position = sf::Vector2f((60 + (i * 30)), (75 + (j * 30))); 
-                tile[2].position = sf::Vector2f((60 + (i * 30)), (105 + (j * 30))); 
-                tile[3].position = sf::Vector2f((30 + (i * 30)), (105 + (j * 30))); 
-                tile[4].position = sf::Vector2f((30 + (i * 30)), (75 + (j * 30))); 
+                // the dimensions of the board are 300x600, and each tile is going to be 28x28 pixels
+                sf::Vector2f basis({30, 75});
+
+                tile[0].position = sf::Vector2f((basis.x + (i * 30)), (basis.y + (j * 30))); 
+                tile[1].position = sf::Vector2f((basis.x + 30 + (i * 30)), (basis.y + (j * 30))); 
+                tile[2].position = sf::Vector2f((basis.x + 30 + (i * 30)), (basis.y + 30 + (j * 30))); 
+                tile[3].position = sf::Vector2f((basis.x + (i * 30)), (basis.y + 30 + (j * 30))); 
+                tile[4].position = sf::Vector2f((basis.x + (i * 30)), (basis.y + (j * 30))); 
 
                 tile[0].color = tile[1].color = tile[2].color = tile[3].color = tile[4].color = sf::Color(343540);
                 window.draw(tile); 
             }
         }
 
-        // building the mini grid where the heldPiece will live 
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 3; j++) {
+        // building the grid where the nextPiece will live
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
                 sf::VertexArray tile(sf::PrimitiveType::LineStrip, 5); 
-                // the position of heldPiece's top left corner is at 
+                // the position of heldPiece's top left corner is at 375x75, so the position of the tiles will be based off of that
+                // the dimensions of these mini pieces are going to be ~2/3 of their original size, 18 pixels
+                sf::Vector2f offset({30, 15}); // offset so that the tile grid is centered 
+                sf::Vector2f basis({375, 75}); 
+
+                tile[0].position = sf::Vector2f((basis.x + offset.x + (i * 30)), (basis.y + offset.y + (j * 30))); 
+                tile[1].position = sf::Vector2f((basis.x + 30 + offset.x + (i * 30)), (basis.y + offset.y + (j * 30))); 
+                tile[2].position = sf::Vector2f((basis.x + 30 + offset.x + (i * 30)), (basis.y + 30 + offset.y + (j * 30))); 
+                tile[3].position = sf::Vector2f((basis.x + offset.x + (i * 30)), (basis.y + 30 + offset.y + (j * 30))); 
+                tile[4].position = sf::Vector2f((basis.x + offset.x + (i * 30)), (basis.y + offset.y + (j * 30))); 
+ 
+                // should be opaque tho this is just for aligning 
+                tile[0].color = tile[1].color = tile[2].color = tile[3].color = tile[4].color = sf::Color(343540);
+                window.draw(tile); 
+            }
+        }
+
+        // building the mini grid where the heldPiece will live 
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                sf::VertexArray miniTile(sf::PrimitiveType::LineStrip, 5); 
+                // the position of heldPiece's top left corner is at 400x550, so the position of the tiles will be based off of that
+                // the dimensions of these mini pieces are going to be ~2/3 of their original size, 18 pixels
+                sf::Vector2f offset({20, 10}); // offset so that the minigrid is centered
+                sf::Vector2f basis({400, 575}); 
+
+                miniTile[0].position = sf::Vector2f((basis.x + offset.x + (i * 20)), (basis.y + offset.y + (j * 20))); 
+                miniTile[1].position = sf::Vector2f((basis.x + 20 + offset.x + (i * 20)), (basis.y + offset.y + (j * 20))); 
+                miniTile[2].position = sf::Vector2f((basis.x + 20 + offset.x + (i * 20)), (basis.y + 20 + offset.y + (j * 20)));
+                miniTile[3].position = sf::Vector2f((basis.x + offset.x + (i * 20)), (basis.y + 20 + offset.y + (j * 20)));
+                miniTile[4].position = sf::Vector2f((basis.x + offset.x + (i * 20)), (basis.y + offset.y + (j * 20)));
+
+                // should be opaque tho this is just for aligning 
+                miniTile[0].color = miniTile[1].color = miniTile[2].color = miniTile[3].color = miniTile[4].color = sf::Color(343540);
+                window.draw(miniTile); 
             }
         }
 
         // building the mini grid where the next3Pieces will live 
-        for (int i = 0; i < 15; i++) {
-            for (int j = 0; j < 3; j++) {
-                
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 15; j++) {
+                // the position of next3Pieces top left corner is at 400x240, so the position of the tiles will be based off of that
+                // the dimensions of these mini pieces are going to be 2/3 of their original size, or (56/3) pixels
+                sf::VertexArray miniTile(sf::PrimitiveType::LineStrip, 5); 
+                sf::Vector2f offset({20, 10}); // offset so that the minigrid is centered
+                sf::Vector2f basis({400, 240}); 
+
+                miniTile[0].position = sf::Vector2f((basis.x + offset.x + (i * 20)), (basis.y + offset.y + (j * 20))); 
+                miniTile[1].position = sf::Vector2f((basis.x + 20 + offset.x + (i * 20)), (basis.y + offset.y + (j * 20))); 
+                miniTile[2].position = sf::Vector2f((basis.x + 20 + offset.x + (i * 20)), (basis.y + 20 + offset.y + (j * 20)));
+                miniTile[3].position = sf::Vector2f((basis.x + offset.x + (i * 20)), (basis.y + 20 + offset.y + (j * 20)));
+                miniTile[4].position = sf::Vector2f((basis.x + offset.x + (i * 20)), (basis.y + offset.y + (j * 20)));
+
+                miniTile[0].color = miniTile[1].color = miniTile[2].color = miniTile[3].color = miniTile[4].color = sf::Color(343540);
+                window.draw(miniTile); 
             }
         }
 
@@ -268,6 +317,21 @@ int main()
             for (Cell* t : row) {
                 window.draw(t->getCover()); 
             }
+        }
+
+        // drawing all the tiles from the nextPiece grid onto the screen
+        for (std::array<Cell*, 10> &row : game->grid) {
+            //game->pieceQueue.front().getPieceGrid()
+        }
+
+        // drawing all the tiles from the next3Pieces grid onto the screen
+        for (std::array<Cell*, 10> &row : game->grid) {
+
+        }
+
+        // drawing all the tiles from heldPiece grid onto the screen 
+        for (std::array<Cell*, 10> &row : game->grid) {
+
         }
 
         window.display(); 
