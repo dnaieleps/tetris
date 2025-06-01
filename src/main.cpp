@@ -193,9 +193,10 @@ int main()
                             std::cout << std::endl; 
                             break; 
                         case sf::Keyboard::Scancode::O: // debugging
-                            game->spawnPiece(*(game->pieceQueue.front())); 
+                            game->spawnPiece(*(game->pieceQueue.front()), 1); 
                             delete game->pieceQueue.front(); 
                             game->pieceQueue.pop(); 
+                            game->addRandomPieceToQueue(); 
                             break; 
                         case sf::Keyboard::Scancode::P: // debugging
                             std::cout << "adding value to top of queue"; 
@@ -312,27 +313,42 @@ int main()
         }
 
 
-        // drawing all the tiles from the cell grid onto the screen
-        for (std::array<Cell*, 10> &row : game->grid) {
+        // drawing all the tiles from the main grid onto the screen
+        for (std::array<Cell*, 10> &row : game->mainGrid) {
             for (Cell* t : row) {
                 window.draw(t->getCover()); 
             }
         }
 
-        // drawing all the tiles from the nextPiece grid onto the screen
-        for (std::array<Cell*, 10> &row : game->grid) {
-            //game->pieceQueue.front().getPieceGrid()
+        for (std::array<Cell*, 3> &row : game->nextPieceGrid) {
+            for (Cell* t : row) {
+                window.draw(t->getCover()); 
+            }
+        }
+    
+        auto pieceQueueCopy = game->pieceQueue; 
+        for (int i = 0; i < 4; i++) {
+
         }
 
+        // drawing all the tiles from the nextPiece grid onto the screen
+        for (auto &row : game->pieceQueue.front()->getPieceGrid()) {
+            for (Cell* t : row) {
+                window.draw(t->getCover()); 
+            }
+        }
+
+        /*
         // drawing all the tiles from the next3Pieces grid onto the screen
-        for (std::array<Cell*, 10> &row : game->grid) {
+        for (std::array<Cell*, 10> &row : ) {
 
         }
 
         // drawing all the tiles from heldPiece grid onto the screen 
-        for (std::array<Cell*, 10> &row : game->grid) {
+        for (std::array<Cell*, 10> &row : ) {
 
         }
+        */
 
         window.display(); 
         /*** END OF DRAWING TO SCREEN ***/

@@ -5,7 +5,6 @@ Piece::Piece(int type_){
     type = type_;  
     sf::RectangleShape tempCover(Cell::cellDimensions); 
     pieceGrid = std::array<std::array<Cell*, 3>, 4>(); 
-
     
     for (auto &r : pieceGrid) {
         for (auto &cell : r) {
