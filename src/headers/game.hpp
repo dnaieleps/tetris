@@ -19,13 +19,14 @@ private:
     int score;
     int tickSpeed;
     bool paused, gameOver, justSwapped;
-    Piece* currentPiece, *heldPiece;
+    Piece* currentPiece, *nextPiece, *heldPiece;
+    std::array<Piece*, 3> next3Pieces; 
 
 public: 
     std::queue<Piece*> pieceQueue; 
     std::array<std::array<Cell*, 10>, 20> mainGrid; 
     std::array<std::array<Cell*, 3>, 4> nextPieceGrid, heldPieceGrid; 
-    std::array<std::array<Cell*, 3>, 15> next3PiecesGrid; 
+    std::array<std::array<Cell*, 3>, 14> next3PiecesGrid; 
 
     Game(); // Game constructor
     ~Game(); // Game destructor 
@@ -45,6 +46,6 @@ public:
     void addRandomPieceToQueue(); // helper function that adds a random Piece to the pieceQueue
     void swapHeldPiece(); // swaps the held piece with the piece that is currently in play
     void updateScore(); // updates the score every gametick
-    void spawnPiece(Piece& piece, int gridID); // copies the passed Piece's pieceGrid onto the spawnpoint of the game grid (top middle)
+    void spawnPiece(); // copies piece from top of the pieceQueue onto the mainGrid, while also updating every other game block
     void movePiece(sf::Keyboard::Scancode key); // moves the copied piece along the board as signified by the arrow that is entered
 };

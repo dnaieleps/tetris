@@ -2,12 +2,12 @@
 #include "../headers/game.hpp"
 #include <iostream>
 #include <random>
+#include <thread>
 
 Game::Game() {
     score = 0; 
     tickSpeed = 1; 
     paused = gameOver = justSwapped = false; 
-    currentPiece = new Piece(0); 
     heldPiece = new Piece(0); 
     
     // initializing the pieceQueue
@@ -15,7 +15,7 @@ Game::Game() {
         addRandomPieceToQueue(); 
     }
 
-    // initializing empty cells across the mainGrid with default cell color
+    // initializing empty cells across the mainGrid with default cell color (all empty)
     for (int i = 0; i < mainGrid.size(); i++) {
         for (int j = 0; j < mainGrid[i].size(); j++) {
             sf::RectangleShape temp(Cell::cellDimensions); 
@@ -25,26 +25,48 @@ Game::Game() {
             mainGrid[i][j] = new Cell(temp); 
         }
     }
-
-    // initializing the nextPieceGrid with default cell colors 
+    
+    // initializing the nextPieceGrid with default empty cell pieceGrid
     for (int i = 0 ; i < nextPieceGrid.size(); i++) {
         for (int j = 0; j < nextPieceGrid[i].size(); j++) {
             sf::RectangleShape temp(Cell::cellDimensions); 
-            temp.setFillColor(GREEN); 
+            temp.setFillColor(GRAY); 
             temp.setPosition({static_cast<float>(405 + (j * 29 + j)), static_cast<float>(90 + (i * 29 + i))});
 
             nextPieceGrid[i][j] = new Cell(temp); 
         }
     }
 
-    // initializing the next3PiecesGrid with default cell colors
-    
+    // initializing the next3PiecesGrid with default empty cell pieceGrids  400x240
+    for (int i = 0; i < next3PiecesGrid.size(); i++) {
+        for (int j = 0; j < next3PiecesGrid[i].size(); j++) {
+            sf::RectangleShape temp(Cell::miniCellDimensions); 
+            temp.setFillColor(GRAY); 
+            temp.setPosition({static_cast<float>(420 + (j * 19 + j)), static_cast<float>(260 + (i * 19 + i))}); 
 
-    // initializing the heldPieceGrid with default cell colors
+            next3PiecesGrid[i][j] = new Cell(temp); 
+        }
+    }
+
+    // initializing the heldPieceGrid with default empty cell pieceGrid
+    for (int i = 0; i < heldPieceGrid.size(); i++) {
+        for (int j = 0; j < heldPieceGrid[i].size(); j++) {
+            sf::RectangleShape temp(Cell::miniCellDimensions); 
+            temp.setFillColor(GRAY); 
+            temp.setPosition({static_cast<float>(420 + (j * 19 + j)), static_cast<float>(585 + (i * 19 + i))});
+
+            heldPieceGrid[i][j] = new Cell(temp); 
+        }
+    }
+
+    
 }
 Game::~Game() {
     delete currentPiece; 
+    delete nextPiece; 
     delete heldPiece; 
+    
+    std::cout << "haii" << std::endl; // debuh
 
     // pieceQueue destructor 
     while (!pieceQueue.empty()) {
@@ -132,43 +154,67 @@ void Game::addRandomPieceToQueue() {
     auto randomPiece = new Piece(randomNumber);
     pieceQueue.push(randomPiece); 
 }
-void Game::spawnPiece(Piece& piece, int gridID) {
-    // piece parameter holds the piece to be copied to the respective grid 
-    // gridID parameter represents one of the 4 places that the piece can be drawn to: 1 (main grid), 2 (nextPiece), 3 (next3Pieces), 4 (heldPiece)
+void Game::spawnPiece() {
+    // [0][3] == [0][0] (grid -> pieceGrid) (top left corner)
+    // [3][5] == [3][2] (grid -> pieceGrid) (bottom right corner) 
+    std::queue<Piece*> temp = pieceQueue; 
+    currentPiece = temp.front(); 
+    temp.pop(); 
+
     int pRow = 0; int pCol = 0; 
-    switch (gridID) {
-        case 1: // main gameplay grid 
-            // [0][3] == [0][0] (grid -> pieceGrid) (top left corner)
-            // [3][5] == [3][2] (grid -> pieceGrid) (bottom right corner) 
-            for (int i = 0; i < 4; i++) {
-                pCol = 0; 
-                for (int j = 3; j < 6; j++) {
-                    // sf::RectangleShape temp(Cell::cellDimensions);
-                    sf::RectangleShape temp(Cell::cellDimensions); 
-                    if (piece.getPieceGrid()[pRow][pCol] != nullptr) {
-                        temp.setFillColor(piece.getPieceGrid()[pRow][pCol]->getCover().getFillColor()); 
-                        temp.setPosition(mainGrid[i][j]->getCover().getPosition());  
-                        
-                        mainGrid[i][j]->setCover(temp);
-                        mainGrid[i][j]->changeFilled();  
-                    }
-                    pCol++; 
-                }
-                pRow++; 
+    for (int i = 0; i < 4; i++) {
+        pCol = 0; 
+        for (int j = 3; j < 6; j++) {
+            if (currentPiece->getPieceGrid()[pRow][pCol] != nullptr) {
+                sf::RectangleShape temp(Cell::cellDimensions); 
+                temp.setFillColor(currentPiece->getPieceGrid()[pRow][pCol]->getCover().getFillColor()); 
+                temp.setPosition(mainGrid[i][j]->getCover().getPosition());  
+                
+                mainGrid[i][j]->setCover(temp);
+                mainGrid[i][j]->changeFilled();  
             }
-            pCol = pRow = 0; 
-            break; 
-        case 2: // nextPiece grid
-            break; 
-        case 3: // next3Pieces grid
-            break; 
-        case 4: // heldPiece grid 
-            break; 
-        default: 
-            std::cerr << "invalid gridID!!! >:(";
-            break; 
+            pCol++; 
+        }
+        pRow++; 
     }
+
     
+    // update each of the Piece pointers appropriately 
+    nextPiece = temp.front(); 
+    temp.pop(); 
+
+    for (int i = 0; i < 3; i++) {
+        next3Pieces[i] = temp.front(); 
+        temp.pop(); 
+    }
+    for (Piece* p : next3Pieces) {
+        std::cout << p->getType() << ", "; 
+    }
+
+    // spawn the pieceGrid of the nextPiece onto the nextPieceGrid
+    for (int i = 0; i < nextPieceGrid.size(); i++) {
+        for (int j = 0; j < nextPieceGrid[i].size(); j++) {
+            if (nextPiece->getPieceGrid()[i][j] != nullptr) {
+                sf::RectangleShape temp(Cell::cellDimensions); 
+                temp.setFillColor(nextPiece->getPieceGrid()[i][j]->getCover().getFillColor()); 
+                temp.setPosition(nextPieceGrid[i][j]->getCover().getPosition()); 
+
+                nextPieceGrid[i][j]->setCover(temp); 
+            }
+        }
+    }
+
+    // spawn the pieceGrid of the next3Pieces array onto the next3PiecesGrid
+    for (int i = 0; i < next3PiecesGrid.size(); i++) {
+        for (int j = 0; j < 3; j++) {
+            sf::RectangleShape temp1(Cell::miniCellDimensions); 
+            sf::RectangleShape temp2(Cell::miniCellDimensions); 
+            sf::RectangleShape temp3(Cell::miniCellDimensions); 
+
+            // temp1.setFillColor(next3Pieces[0]->getPieceGrid()); ****************************************************************************************************
+        }
+    }
+    std::cout << "yerr" << std::endl; 
 }
 void Game::swapHeldPiece() {
     if (justSwapped) {

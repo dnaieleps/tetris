@@ -193,7 +193,7 @@ int main()
                             std::cout << std::endl; 
                             break; 
                         case sf::Keyboard::Scancode::O: // debugging
-                            game->spawnPiece(*(game->pieceQueue.front()), 1); 
+                            game->spawnPiece(); 
                             delete game->pieceQueue.front(); 
                             game->pieceQueue.pop(); 
                             game->addRandomPieceToQueue(); 
@@ -231,7 +231,7 @@ int main()
         window.draw(score); 
         window.draw(pauseIconHolder); 
 
-        // building the grid where the blocks will all be placed
+        // building the mainGrid where gameplay will happen 
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 20; j++) {
                 sf::VertexArray tile(sf::PrimitiveType::LineStrip, 5); 
@@ -271,6 +271,26 @@ int main()
             }
         }
 
+        // building the mini grid where the next3Pieces will live 
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 14; j++) {
+                // the position of next3Pieces top left corner is at 400x240, so the position of the tiles will be based off of that
+                // the dimensions of these mini pieces are going to be 2/3 of their original size, or (56/3) pixels
+                sf::VertexArray miniTile(sf::PrimitiveType::LineStrip, 5); 
+                sf::Vector2f offset({20, 20}); // offset so that the minigrid is centered
+                sf::Vector2f basis({400, 240}); 
+
+                miniTile[0].position = sf::Vector2f((basis.x + offset.x + (i * 20)), (basis.y + offset.y + (j * 20))); 
+                miniTile[1].position = sf::Vector2f((basis.x + 20 + offset.x + (i * 20)), (basis.y + offset.y + (j * 20))); 
+                miniTile[2].position = sf::Vector2f((basis.x + 20 + offset.x + (i * 20)), (basis.y + 20 + offset.y + (j * 20)));
+                miniTile[3].position = sf::Vector2f((basis.x + offset.x + (i * 20)), (basis.y + 20 + offset.y + (j * 20)));
+                miniTile[4].position = sf::Vector2f((basis.x + offset.x + (i * 20)), (basis.y + offset.y + (j * 20)));
+
+                miniTile[0].color = miniTile[1].color = miniTile[2].color = miniTile[3].color = miniTile[4].color = sf::Color(343540);
+                window.draw(miniTile); 
+            }
+        }
+
         // building the mini grid where the heldPiece will live 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
@@ -292,63 +312,28 @@ int main()
             }
         }
 
-        // building the mini grid where the next3Pieces will live 
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 15; j++) {
-                // the position of next3Pieces top left corner is at 400x240, so the position of the tiles will be based off of that
-                // the dimensions of these mini pieces are going to be 2/3 of their original size, or (56/3) pixels
-                sf::VertexArray miniTile(sf::PrimitiveType::LineStrip, 5); 
-                sf::Vector2f offset({20, 10}); // offset so that the minigrid is centered
-                sf::Vector2f basis({400, 240}); 
 
-                miniTile[0].position = sf::Vector2f((basis.x + offset.x + (i * 20)), (basis.y + offset.y + (j * 20))); 
-                miniTile[1].position = sf::Vector2f((basis.x + 20 + offset.x + (i * 20)), (basis.y + offset.y + (j * 20))); 
-                miniTile[2].position = sf::Vector2f((basis.x + 20 + offset.x + (i * 20)), (basis.y + 20 + offset.y + (j * 20)));
-                miniTile[3].position = sf::Vector2f((basis.x + offset.x + (i * 20)), (basis.y + 20 + offset.y + (j * 20)));
-                miniTile[4].position = sf::Vector2f((basis.x + offset.x + (i * 20)), (basis.y + offset.y + (j * 20)));
-
-                miniTile[0].color = miniTile[1].color = miniTile[2].color = miniTile[3].color = miniTile[4].color = sf::Color(343540);
-                window.draw(miniTile); 
-            }
-        }
-
-
-        // drawing all the tiles from the main grid onto the screen
+        // drawing all the tiles from each component's grid onto the screen
         for (std::array<Cell*, 10> &row : game->mainGrid) {
             for (Cell* t : row) {
                 window.draw(t->getCover()); 
             }
         }
-
-        for (std::array<Cell*, 3> &row : game->nextPieceGrid) {
+        for (auto &row : game->nextPieceGrid) {
             for (Cell* t : row) {
                 window.draw(t->getCover()); 
             }
         }
-    
-        auto pieceQueueCopy = game->pieceQueue; 
-        for (int i = 0; i < 4; i++) {
-
-        }
-
-        // drawing all the tiles from the nextPiece grid onto the screen
-        for (auto &row : game->pieceQueue.front()->getPieceGrid()) {
+        for (auto &row : game->next3PiecesGrid) {
             for (Cell* t : row) {
                 window.draw(t->getCover()); 
             }
         }
-
-        /*
-        // drawing all the tiles from the next3Pieces grid onto the screen
-        for (std::array<Cell*, 10> &row : ) {
-
+        for (auto &row : game->heldPieceGrid) {
+            for (Cell* t : row) {
+                window.draw(t->getCover()); 
+            }
         }
-
-        // drawing all the tiles from heldPiece grid onto the screen 
-        for (std::array<Cell*, 10> &row : ) {
-
-        }
-        */
 
         window.display(); 
         /*** END OF DRAWING TO SCREEN ***/
