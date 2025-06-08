@@ -1,8 +1,6 @@
-
 #include "../headers/game.hpp"
 #include <iostream>
 #include <random>
-#include <thread>
 
 Game::Game() {
     score = 0; 
@@ -171,7 +169,9 @@ void Game::spawnPiece() {
                 temp.setPosition(mainGrid[i][j]->getCover().getPosition());  
                 
                 mainGrid[i][j]->setCover(temp);
-                mainGrid[i][j]->changeFilled();  
+                if (temp.getFillColor() != GRAY) {
+                    mainGrid[i][j]->changeFilled();  
+                }
             }
             pCol++; 
         }
@@ -186,9 +186,6 @@ void Game::spawnPiece() {
     for (int i = 0; i < 3; i++) {
         next3Pieces[i] = temp.front(); 
         temp.pop(); 
-    }
-    for (Piece* p : next3Pieces) {
-        std::cout << p->getType() << ", "; 
     }
 
     // spawn the pieceGrid of the nextPiece onto the nextPieceGrid
@@ -205,16 +202,25 @@ void Game::spawnPiece() {
     }
 
     // spawn the pieceGrid of the next3Pieces array onto the next3PiecesGrid
-    for (int i = 0; i < next3PiecesGrid.size(); i++) {
+    for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 3; j++) {
             sf::RectangleShape temp1(Cell::miniCellDimensions); 
             sf::RectangleShape temp2(Cell::miniCellDimensions); 
             sf::RectangleShape temp3(Cell::miniCellDimensions); 
 
-            // temp1.setFillColor(next3Pieces[0]->getPieceGrid()); ****************************************************************************************************
+            temp1.setFillColor(next3Pieces[0]->getPieceGrid()[i][j]->getCover().getFillColor());
+            temp2.setFillColor(next3Pieces[1]->getPieceGrid()[i][j]->getCover().getFillColor()); 
+            temp3.setFillColor(next3Pieces[2]->getPieceGrid()[i][j]->getCover().getFillColor()); 
+
+            temp1.setPosition(next3PiecesGrid[i][j]->getCover().getPosition());
+            temp2.setPosition(next3PiecesGrid[i+4][j]->getCover().getPosition());
+            temp3.setPosition(next3PiecesGrid[i+8][j]->getCover().getPosition());
+            
+            next3PiecesGrid[i][j]->setCover(temp1);
+            next3PiecesGrid[i+4][j]->setCover(temp2); 
+            next3PiecesGrid[i+8][j]->setCover(temp3); 
         }
     }
-    std::cout << "yerr" << std::endl; 
 }
 void Game::swapHeldPiece() {
     if (justSwapped) {
@@ -225,9 +231,27 @@ void Game::swapHeldPiece() {
     
     justSwapped = !justSwapped; 
 }
-void Game::updateScore() {
-
-} 
-void Game::movePiece(sf::Keyboard::Scancode key) {
+void Game::movePiece(const sf::Keyboard::Scancode &key) {
+    std::cout << "hai" << std::endl; 
+    switch (key) {
+        case sf::Keyboard::Scancode::A: // moving all of the currentPieces tiles one tile left, if possible            
+            for (int i = 0; i < currentPiece->getPieceGrid().size(); i++) {
+                for (int j = 0; j < currentPiece->getPieceGrid()[i].size(); j++) {
+                    auto currentPos = currentPiece->getPieceGrid()[i][j]->getCover().getPosition();
+                    currentPiece->getPieceGrid()[i][j]->getCover().setPosition({currentPos.x + 30, currentPos.y}); 
+                }
+            }
+            break; 
+        case sf::Keyboard::Scancode::D: 
+            break; 
+        case sf::Keyboard::Scancode::S: 
+            break; 
+        case sf::Keyboard::Scancode::Space: 
+            break; 
+        default: 
+            break; 
+    }
+}
+void Game::update() {
 
 }

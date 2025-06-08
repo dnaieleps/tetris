@@ -47,5 +47,6 @@ public:
     void swapHeldPiece(); // swaps the held piece with the piece that is currently in play
     void updateScore(); // updates the score every gametick
     void spawnPiece(); // copies piece from top of the pieceQueue onto the mainGrid, while also updating every other game block
-    void movePiece(sf::Keyboard::Scancode key); // moves the copied piece along the board as signified by the arrow that is entered
+    void movePiece(const sf::Keyboard::Scancode &key); // moves the copied piece along the board as signified by the arrow that is entered
+    void update(); // handles recoordinating the new tile positions, updating score, checking game state, etc
 };

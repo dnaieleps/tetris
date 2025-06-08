@@ -156,6 +156,7 @@ int main()
                         case sf::Keyboard::Scancode::W: // rotate cw
                             break;
                         case sf::Keyboard::Scancode::A: // move left
+                            game->movePiece(sf::Keyboard::Scancode::A); 
                             break;
                         case sf::Keyboard::Scancode::S: // soft drop
                             break;
@@ -214,8 +215,8 @@ int main()
                 /*** END OF KEYPRESS EVENT HANDLING ***/
             }
         }
-
         
+        game->update(); 
 
         /*** DRAWING EVERYTHING TO SCREEN ***/
         window.clear();  
