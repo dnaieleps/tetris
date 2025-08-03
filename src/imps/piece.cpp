@@ -4,87 +4,73 @@
 Piece::Piece(int type_){
     type = type_;  
     sf::RectangleShape tempCover(Cell::cellDimensions); 
-    pieceGrid = std::array<std::array<Cell*, 3>, 4>(); 
-    
-    for (auto &r : pieceGrid) {
-        for (auto &cell : r) {
-            tempCover.setFillColor(GRAY); 
-            cell = new Cell(tempCover); 
-        }
-    }
-    
-    /****************************************************************************************
-    *  visualization of the pieceGrid, where all of the piece types can be constructed from 
-    *           [[*, *, *], 
-    *            [*, *, *], 
-    *            [*, *, *],
-    *            [*, *, *],]
-    *****************************************************************************************/
+    pieceGridRotations = std::array<std::vector<std::vector<Cell*>>, 4>(); 
 
-    // templates for all of the possible tetris pieces 
+    // characteristics of the default light gray cell in which each pieceGrid will initially be filled with 
     sf::RectangleShape temp(Cell::cellDimensions);
+    temp.setFillColor(LIGHT_GRAY);
+    Cell *tempCell = new Cell(temp);
+    tempCell->setActive(false); 
+    currentPieceGrid = std::vector<std::vector<Cell*>>(); 
+    sf::RectangleShape fillCover(Cell::cellDimensions);
+    
     switch (type) {
-        case 1: // I 
-            temp.setFillColor(LIGHT_BLUE); 
-            pieceGrid[0][1]->setCover(temp); 
-            pieceGrid[1][1]->setCover(temp); 
-            pieceGrid[2][1]->setCover(temp); 
-            pieceGrid[3][1]->setCover(temp); 
+        case 1: // I (only 2 blueprints needed)
+            // structuring 
+            for (int i = 0; i < 1; i++) {
+                std::vector<Cell*> tempRow; 
+                for (int j = 0; j < 4; j++) {
+                    tempRow.push_back(tempCell); 
+                }
+                currentPieceGrid.push_back(tempRow); 
+            }
+
+            // filling in the piece's filled spots 
+            fillCover.setFillColor(LIGHT_BLUE);
+
+            currentPieceGrid[0][0]->setCover(fillCover); 
+            currentPieceGrid[0][0]->setActive(true); 
+
+            /* I PIECE'S PIECEGRIDS: 
+            *
+            *
+            * 
+            * 
+            */
+
+            pieceGridRotations[0] = currentPieceGrid;
+            pieceGridRotations[1] = currentPieceGrid;
+            pieceGridRotations[2] = currentPieceGrid;
+            pieceGridRotations[3] = currentPieceGrid;
             break; 
-        case 2: // O
-            temp.setFillColor(YELLOW); 
-            pieceGrid[2][1]->setCover(temp);
-            pieceGrid[2][2]->setCover(temp);
-            pieceGrid[3][1]->setCover(temp);
-            pieceGrid[3][2]->setCover(temp);
+        case 2: // O ()
+            
             break; 
         case 3: // L
-            temp.setFillColor(ORANGE);
-            pieceGrid[1][1]->setCover(temp);
-            pieceGrid[2][1]->setCover(temp);
-            pieceGrid[3][1]->setCover(temp);
-            pieceGrid[3][2]->setCover(temp);
+            
             break; 
         case 4: // J
-            temp.setFillColor(DARK_BLUE);
-            pieceGrid[1][1]->setCover(temp);
-            pieceGrid[2][1]->setCover(temp);
-            pieceGrid[3][1]->setCover(temp);
-            pieceGrid[3][0]->setCover(temp);
+            
             break; 
         case 5: // Z
-            temp.setFillColor(RED);
-            pieceGrid[2][0]->setCover(temp);
-            pieceGrid[2][1]->setCover(temp);
-            pieceGrid[3][1]->setCover(temp);
-            pieceGrid[3][2]->setCover(temp);
+            
             break;
         case 6: // S
-            temp.setFillColor(GREEN);
-            pieceGrid[3][0]->setCover(temp);
-            pieceGrid[3][1]->setCover(temp);
-            pieceGrid[2][1]->setCover(temp);
-            pieceGrid[2][2]->setCover(temp);
+            
             break; 
         case 7: // T
-            temp.setFillColor(PURPLE);
-            pieceGrid[2][1]->setCover(temp);
-            pieceGrid[3][0]->setCover(temp);
-            pieceGrid[3][1]->setCover(temp);
-            pieceGrid[3][2]->setCover(temp);
+            
             break; 
         default: // exception catcher
-            temp.setFillColor(LIGHT_GRAY);
-            for (auto &r : pieceGrid) {
-                for (auto &cell : r) {
-                    cell->setCover(temp); 
-                }
-            }
+            
             break; 
     }
+
+    currentPieceGrid = pieceGridRotations[0]; 
+    delete tempCell; 
 }
 Piece::~Piece(){
-    for (const auto &p : pieceGrid) {
+    for (const auto &p : currentPieceGrid) {
         for (auto *cell : p) {
             delete cell; 
         }
@@ -93,8 +79,8 @@ Piece::~Piece(){
 int Piece::getType() {
     return type; 
 }
-const std::array<std::array<Cell*, 3>, 4>& Piece::getPieceGrid() const {
-    return pieceGrid; 
+const std::vector<std::vector<Cell*>>& Piece::getCurrentPieceGrid() const {
+    return currentPieceGrid; 
 }
 bool Piece::operator==(const Piece& other) {
     return type == other.type; 

@@ -19,8 +19,9 @@ private:
     int score;
     int tickSpeed;
     bool paused, gameOver, justSwapped;
-    Piece* currentPiece, *nextPiece, *heldPiece;
+    Piece *currentPiece, *nextPiece, *heldPiece;
     std::array<Piece*, 3> next3Pieces; 
+    std::vector<std::vector<Cell*>> playGrid; 
 
 public: 
     std::queue<Piece*> pieceQueue; 

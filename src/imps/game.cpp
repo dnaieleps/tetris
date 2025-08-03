@@ -149,12 +149,12 @@ void Game::addRandomPieceToQueue() {
     std::uniform_int_distribution<> distr(1, 7); 
     int randomNumber = distr(gen); 
     
-    auto randomPiece = new Piece(randomNumber);
+    auto randomPiece = new Piece(1); //      PUT RANDOMNUMBER BACK WHEN DONE WITH ALL BLUEPRINTS
     pieceQueue.push(randomPiece); 
 }
 void Game::spawnPiece() {
-    // [0][3] == [0][0] (grid -> pieceGrid) (top left corner)
-    // [3][5] == [3][2] (grid -> pieceGrid) (bottom right corner) 
+    // [0][3] == [0][0] (grid -> currentPieceGrid) (top left corner)
+    // [3][5] == [3][2] (grid -> currentPieceGrid) (bottom right corner) 
     std::queue<Piece*> temp = pieceQueue; 
     currentPiece = temp.front(); 
     temp.pop(); 
@@ -163,21 +163,19 @@ void Game::spawnPiece() {
     for (int i = 0; i < 4; i++) {
         pCol = 0; 
         for (int j = 3; j < 6; j++) {
-            if (currentPiece->getPieceGrid()[pRow][pCol] != nullptr) {
+            if (currentPiece->getCurrentPieceGrid()[pRow][pCol] != nullptr) {
                 sf::RectangleShape temp(Cell::cellDimensions); 
-                temp.setFillColor(currentPiece->getPieceGrid()[pRow][pCol]->getCover().getFillColor()); 
+                temp.setFillColor(currentPiece->getCurrentPieceGrid()[pRow][pCol]->getCover().getFillColor()); 
                 temp.setPosition(mainGrid[i][j]->getCover().getPosition());  
                 
                 mainGrid[i][j]->setCover(temp);
-                if (temp.getFillColor() != GRAY) {
-                    mainGrid[i][j]->changeFilled();  
-                }
             }
             pCol++; 
         }
         pRow++; 
     }
 
+    std::cout << "hai" << std::endl;
     
     // update each of the Piece pointers appropriately 
     nextPiece = temp.front(); 
@@ -188,12 +186,12 @@ void Game::spawnPiece() {
         temp.pop(); 
     }
 
-    // spawn the pieceGrid of the nextPiece onto the nextPieceGrid
+    // spawn the currentPieceGrid of the nextPiece onto the nextPieceGrid
     for (int i = 0; i < nextPieceGrid.size(); i++) {
         for (int j = 0; j < nextPieceGrid[i].size(); j++) {
-            if (nextPiece->getPieceGrid()[i][j] != nullptr) {
+            if (nextPiece->getCurrentPieceGrid()[i][j] != nullptr) {
                 sf::RectangleShape temp(Cell::cellDimensions); 
-                temp.setFillColor(nextPiece->getPieceGrid()[i][j]->getCover().getFillColor()); 
+                temp.setFillColor(nextPiece->getCurrentPieceGrid()[i][j]->getCover().getFillColor()); 
                 temp.setPosition(nextPieceGrid[i][j]->getCover().getPosition()); 
 
                 nextPieceGrid[i][j]->setCover(temp); 
@@ -201,16 +199,16 @@ void Game::spawnPiece() {
         }
     }
 
-    // spawn the pieceGrid of the next3Pieces array onto the next3PiecesGrid
+    // spawn the currentPieceGrid of the next3Pieces array onto the next3PiecesGrid
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 3; j++) {
             sf::RectangleShape temp1(Cell::miniCellDimensions); 
             sf::RectangleShape temp2(Cell::miniCellDimensions); 
             sf::RectangleShape temp3(Cell::miniCellDimensions); 
 
-            temp1.setFillColor(next3Pieces[0]->getPieceGrid()[i][j]->getCover().getFillColor());
-            temp2.setFillColor(next3Pieces[1]->getPieceGrid()[i][j]->getCover().getFillColor()); 
-            temp3.setFillColor(next3Pieces[2]->getPieceGrid()[i][j]->getCover().getFillColor()); 
+            temp1.setFillColor(next3Pieces[0]->getCurrentPieceGrid()[i][j]->getCover().getFillColor());
+            temp2.setFillColor(next3Pieces[1]->getCurrentPieceGrid()[i][j]->getCover().getFillColor()); 
+            temp3.setFillColor(next3Pieces[2]->getCurrentPieceGrid()[i][j]->getCover().getFillColor()); 
 
             temp1.setPosition(next3PiecesGrid[i][j]->getCover().getPosition());
             temp2.setPosition(next3PiecesGrid[i+4][j]->getCover().getPosition());
@@ -235,10 +233,10 @@ void Game::movePiece(const sf::Keyboard::Scancode &key) {
     std::cout << "hai" << std::endl; 
     switch (key) {
         case sf::Keyboard::Scancode::A: // moving all of the currentPieces tiles one tile left, if possible            
-            for (int i = 0; i < currentPiece->getPieceGrid().size(); i++) {
-                for (int j = 0; j < currentPiece->getPieceGrid()[i].size(); j++) {
-                    auto currentPos = currentPiece->getPieceGrid()[i][j]->getCover().getPosition();
-                    currentPiece->getPieceGrid()[i][j]->getCover().setPosition({currentPos.x + 30, currentPos.y}); 
+            for (int i = 0; i < currentPiece->getCurrentPieceGrid().size(); i++) {
+                for (int j = 0; j < currentPiece->getCurrentPieceGrid()[i].size(); j++) {
+                    auto currentPos = currentPiece->getCurrentPieceGrid()[i][j]->getCover().getPosition();
+                    currentPiece->getCurrentPieceGrid()[i][j]->getCover().setPosition({currentPos.x + 30, currentPos.y}); 
                 }
             }
             break; 

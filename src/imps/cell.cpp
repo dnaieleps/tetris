@@ -5,15 +5,16 @@ const sf::Vector2f Cell::miniCellDimensions = sf::Vector2f({19, 19});
 
 Cell::Cell(sf::RectangleShape& cover_) {
     cover = cover_; 
-    filled = false; 
+    active = false; 
 }
-bool Cell::isFilled() {
-    return filled; 
+bool Cell::isActive() {
+    return active; 
 }
-bool Cell::changeFilled() {
-    filled = !filled; 
-    return filled; 
+bool Cell::setActive(bool active_) {
+    active = active_; 
+    return active; 
 }
+
 sf::RectangleShape& Cell::getCover() {
     return cover; 
 }
