@@ -21,13 +21,13 @@ private:
     bool paused, gameOver, justSwapped;
     Piece *currentPiece, *nextPiece, *heldPiece;
     std::array<Piece*, 3> next3Pieces; 
-    std::vector<std::vector<Cell*>> playGrid; 
 
 public: 
     std::queue<Piece*> pieceQueue; 
     std::array<std::array<Cell*, 10>, 20> mainGrid; 
     std::array<std::array<Cell*, 3>, 4> nextPieceGrid, heldPieceGrid; 
     std::array<std::array<Cell*, 3>, 14> next3PiecesGrid; 
+    std::vector<std::vector<Cell*>> playGrid; 
 
     Game(); // Game constructor
     ~Game(); // Game destructor 

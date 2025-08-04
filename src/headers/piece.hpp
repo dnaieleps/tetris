@@ -23,15 +23,15 @@
 class Piece { 
 private:
     int type;
-    int center[2]; 
-    std::vector<std::vector<Cell*>> currentPieceGrid;
-    std::array<std::vector<std::vector<Cell*>>, 4> pieceGridRotations; 
+    std::array<std::array<Cell*, 4>, 4> currentPieceGrid;
+    std::array<std::array<std::array<Cell*, 4>, 4>, 4> pieceGridRotations; 
 
 public:
     Piece() = default;
     Piece(int type_);
     ~Piece();
     int getType(); 
-    const std::vector<std::vector<Cell*>>& getCurrentPieceGrid() const;
+    const std::array<std::array<Cell*, 4>, 4>& getCurrentPieceGrid() const;
+    void clearGrid(std::array<std::array<Cell*, 4>, 4> &pieceGrid, sf::RectangleShape cover); 
     bool operator==(const Piece& other); 
 };

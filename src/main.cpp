@@ -215,7 +215,7 @@ int main()
                 /*** END OF KEYPRESS EVENT HANDLING ***/
             }
         }
-        
+
         game->update(); 
 
         /*** DRAWING EVERYTHING TO SCREEN ***/

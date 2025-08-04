@@ -1,64 +1,102 @@
 #include "../headers/piece.hpp"
 #include <iostream>
 
+// ***** PUBLIC MEMBER FUNCTIONS ***** 
 Piece::Piece(int type_){
     type = type_;  
-    sf::RectangleShape tempCover(Cell::cellDimensions); 
-    pieceGridRotations = std::array<std::vector<std::vector<Cell*>>, 4>(); 
+    pieceGridRotations = std::array<std::array<std::array<Cell*, 4>, 4>, 4>(); 
 
     // characteristics of the default light gray cell in which each pieceGrid will initially be filled with 
-    sf::RectangleShape temp(Cell::cellDimensions);
-    temp.setFillColor(LIGHT_GRAY);
-    Cell *tempCell = new Cell(temp);
-    tempCell->setActive(false); 
-    currentPieceGrid = std::vector<std::vector<Cell*>>(); 
-    sf::RectangleShape fillCover(Cell::cellDimensions);
+    sf::RectangleShape tempCover(Cell::cellDimensions);
+    tempCover.setFillColor(GRAY);  
+    auto cleanCover = tempCover; // used to clean the grid everytime a new "costume" is being created
+
+    // initialization of the currentPieceGrid
+    currentPieceGrid = std::array<std::array<Cell*, 4>, 4>(); 
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            currentPieceGrid[i][j] = new Cell(tempCover); 
+        }
+    }
     
     switch (type) {
-        case 1: // I (only 2 blueprints needed)
-            // structuring 
-            for (int i = 0; i < 1; i++) {
-                std::vector<Cell*> tempRow; 
-                for (int j = 0; j < 4; j++) {
-                    tempRow.push_back(tempCell); 
-                }
-                currentPieceGrid.push_back(tempRow); 
-            }
+        case 1: // I 
+            tempCover.setFillColor(LIGHT_BLUE); 
 
-            // filling in the piece's filled spots 
-            fillCover.setFillColor(LIGHT_BLUE);
+            // vertical rotations
+            currentPieceGrid[0][0] = new Cell(tempCover);                       //  [[1, 0, 0, 0], 
+            currentPieceGrid[1][0] = new Cell(tempCover);                       //   [1, 0, 0, 0],
+            currentPieceGrid[2][0] = new Cell(tempCover);                       //   [1, 0, 0, 0], 
+            currentPieceGrid[3][0] = new Cell(tempCover);                       //   [1, 0, 0, 0]]
+            pieceGridRotations[0] = pieceGridRotations[2] = currentPieceGrid; 
+            clearGrid(currentPieceGrid, cleanCover); 
 
-            currentPieceGrid[0][0]->setCover(fillCover); 
-            currentPieceGrid[0][0]->setActive(true); 
-
-            /* I PIECE'S PIECEGRIDS: 
-            *
-            *
-            * 
-            * 
-            */
-
-            pieceGridRotations[0] = currentPieceGrid;
-            pieceGridRotations[1] = currentPieceGrid;
-            pieceGridRotations[2] = currentPieceGrid;
-            pieceGridRotations[3] = currentPieceGrid;
+            // horizontal rotations
+            currentPieceGrid[0][0] = new Cell(tempCover);                       //  [[1, 1, 1, 1],  
+            currentPieceGrid[0][1] = new Cell(tempCover);                       //   [0, 0, 0, 0],  
+            currentPieceGrid[0][2] = new Cell(tempCover);                       //   [0, 0, 0, 0],  
+            currentPieceGrid[0][3] = new Cell(tempCover);                       //   [0, 0, 0, 0]]  
+            pieceGridRotations[1] = pieceGridRotations[3] = currentPieceGrid; 
             break; 
         case 2: // O ()
+            tempCover.setFillColor(YELLOW); 
             
+            // vertical and horizontal rotations (they're all the same lol)
+            currentPieceGrid[0][0] = new Cell(tempCover);                       //  [[1, 1, 0, 0],  
+            currentPieceGrid[0][1] = new Cell(tempCover);                       //   [1, 1, 0, 0],  
+            currentPieceGrid[1][0] = new Cell(tempCover);                       //   [0, 0, 0, 0],  
+            currentPieceGrid[1][1] = new Cell(tempCover);                       //   [0, 0, 0, 0]]  
+            pieceGridRotations[0] = pieceGridRotations[1] = pieceGridRotations[2]  = pieceGridRotations[3] = currentPieceGrid; 
+            clearGrid(currentPieceGrid, cleanCover); 
             break; 
         case 3: // L
-            
+            tempCover.setFillColor(ORANGE); 
+
+            // vertical rotations
+            currentPieceGrid[0][0] = new Cell(tempCover);                       //  [[1, 0, 0, 0],  
+            currentPieceGrid[1][0] = new Cell(tempCover);                       //   [1, 0, 0, 0],  
+            currentPieceGrid[2][0] = new Cell(tempCover);                       //   [1, 1, 0, 0],  
+            currentPieceGrid[2][1] = new Cell(tempCover);                       //   [0, 0, 0, 0]]  
+            pieceGridRotations[0] = currentPieceGrid; 
+            clearGrid(currentPieceGrid, cleanCover); 
+
+
+            currentPieceGrid[0][0] = new Cell(tempCover);                       //  [[1, 1, 0, 0],  
+            currentPieceGrid[0][1] = new Cell(tempCover);                       //   [0, 1, 0, 0],  
+            currentPieceGrid[1][1] = new Cell(tempCover);                       //   [0, 1, 0, 0],  
+            currentPieceGrid[2][1] = new Cell(tempCover);                       //   [0, 0, 0, 0]]  
+            pieceGridRotations[1] = currentPieceGrid; 
+            clearGrid(currentPieceGrid, cleanCover); 
+
+            // horizontal rotations
+            currentPieceGrid[0][0] = new Cell(tempCover);                       //  [[1, 0, 0, 0],  
+            currentPieceGrid[1][0] = new Cell(tempCover);                       //   [1, 0, 0, 0],  
+            currentPieceGrid[2][0] = new Cell(tempCover);                       //   [1, 1, 0, 0],  
+            currentPieceGrid[2][1] = new Cell(tempCover);                       //   [0, 0, 0, 0]]  
+            pieceGridRotations[2] = currentPieceGrid; 
+            clearGrid(currentPieceGrid, cleanCover); 
+
+            currentPieceGrid[0][0] = new Cell(tempCover);                       //  [[1, 0, 0, 0],  
+            currentPieceGrid[1][0] = new Cell(tempCover);                       //   [1, 0, 0, 0],  
+            currentPieceGrid[2][0] = new Cell(tempCover);                       //   [1, 1, 0, 0],  
+            currentPieceGrid[2][1] = new Cell(tempCover);                       //   [0, 0, 0, 0]]  
+            pieceGridRotations[3] = currentPieceGrid; 
+            clearGrid(currentPieceGrid, cleanCover); 
             break; 
         case 4: // J
+            tempCover.setFillColor(DARK_BLUE);
             
             break; 
         case 5: // Z
+            tempCover.setFillColor(RED); 
             
             break;
         case 6: // S
+            tempCover.setFillColor(GREEN); 
             
             break; 
         case 7: // T
+            tempCover.setFillColor(PURPLE); 
             
             break; 
         default: // exception catcher
@@ -66,8 +104,7 @@ Piece::Piece(int type_){
             break; 
     }
 
-    currentPieceGrid = pieceGridRotations[0]; 
-    delete tempCell; 
+    currentPieceGrid = pieceGridRotations[1];
 }
 Piece::~Piece(){
     for (const auto &p : currentPieceGrid) {
@@ -79,9 +116,19 @@ Piece::~Piece(){
 int Piece::getType() {
     return type; 
 }
-const std::vector<std::vector<Cell*>>& Piece::getCurrentPieceGrid() const {
+const std::array<std::array<Cell*, 4>, 4>& Piece::getCurrentPieceGrid() const {
     return currentPieceGrid; 
 }
 bool Piece::operator==(const Piece& other) {
     return type == other.type; 
+}
+
+// ***** PRIVATE MEMBER FUNCTIONS ***** 
+void Piece::clearGrid(std::array<std::array<Cell*, 4>, 4> &pieceGrid, sf::RectangleShape cover) {
+    for (int i = 0; i < pieceGrid.size(); i++) {
+        for (int j = 0; j <pieceGrid[i].size(); j++) {
+
+            pieceGrid[i][j]->setCover(cover); 
+        }
+    }
 }

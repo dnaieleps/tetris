@@ -1,8 +1,10 @@
 #include "../headers/cell.hpp"
 
+// ***** PUBLIC MEMBER CONSTANTS ***** 
 const sf::Vector2f Cell::cellDimensions = sf::Vector2f({28, 28}); 
 const sf::Vector2f Cell::miniCellDimensions = sf::Vector2f({19, 19}); 
 
+// ***** PUBLIC MEMBER FUNCTIONS ***** 
 Cell::Cell(sf::RectangleShape& cover_) {
     cover = cover_; 
     active = false; 
