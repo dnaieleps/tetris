@@ -153,8 +153,11 @@ int main()
                             window.close(); 
                             main(); 
                             break;
-                        case sf::Keyboard::Scancode::W: // rotate cw
+                        case sf::Keyboard::Scancode::Q: // rotate ccw
                             break;
+                        case sf::Keyboard::Scancode::E: // rotate cw
+                            game->rotatePiece(sf::Keyboard::Scancode::E);
+                            break; 
                         case sf::Keyboard::Scancode::A: // move left
                             game->movePiece(sf::Keyboard::Scancode::A); 
                             break;
@@ -215,8 +218,6 @@ int main()
                 /*** END OF KEYPRESS EVENT HANDLING ***/
             }
         }
-
-        game->update(); 
 
         /*** DRAWING EVERYTHING TO SCREEN ***/
         window.clear();  
@@ -331,6 +332,11 @@ int main()
             }
         }
         for (auto &row : game->heldPieceGrid) {
+            for (Cell* t : row) {
+                window.draw(t->getCover()); 
+            }
+        }
+        for (auto &row : game->playGrid) {
             for (Cell* t : row) {
                 window.draw(t->getCover()); 
             }

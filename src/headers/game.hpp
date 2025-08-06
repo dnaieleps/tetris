@@ -32,22 +32,24 @@ public:
     Game(); // Game constructor
     ~Game(); // Game destructor 
     int getScore(); // returns current player score
-    int increaseScore(int amt); // increments player score by given amount
     int getTickSpeed(); // returns game's current tick speed
-    int setTickSpeed(int amt); // changes the tick speed to the specified amount to increase/decrease difficulty
     bool isPaused(); // returns whether or not the game is paused 
-    bool changePause(); // switches to either paused or unpaused depending on its previous state
     bool gameIsOver(); // returns whether or not the game is over, meaning the player lost
-    bool changeGameOver(); // changes the gameOver variable to be true, ending the game
     bool hasJustSwapped(); // returns whether or not the player has just swapped a piece. put in place so you can't spam swap
     Piece& getCurrentPiece(); // returns the current piece in play 
-    Piece& getHeldPiece(); // returns the held piece in the held box (bottom right)
-    std::array<std::array<Cell*, 10>, 20>& getGrid(); // returns the address of the game grid 
     Piece& getNextPiece(); // pops the top value off of the pieceQueue to be displayed onto the game screen
+    Piece& getHeldPiece(); // returns the held piece in the held box (bottom right)
+
+    int increaseScore(int amt); // increments player score by given amount
+    int setTickSpeed(int amt); // changes the tick speed to the specified amount to increase/decrease difficulty
+    bool changePause(); // switches to either paused or unpaused depending on its previous state
+    bool changeGameOver(); // changes the gameOver variable to be true, ending the game
+    
     void addRandomPieceToQueue(); // helper function that adds a random Piece to the pieceQueue
     void swapHeldPiece(); // swaps the held piece with the piece that is currently in play
-    void updateScore(); // updates the score every gametick
-    void spawnPiece(); // copies piece from top of the pieceQueue onto the mainGrid, while also updating every other game block
+    void spawnPiece(); // spawns the next piece off the top of the pieceQueue to the top of the mainGrid with basis {0, 4}
+    void redrawPiece(const std::vector<std::vector<Cell*>> &currentPG, const std::array<int, 2> &basisCoords); // redraws Piece to the mainGrid, given a specific basis point
     void movePiece(const sf::Keyboard::Scancode &key); // moves the copied piece along the board as signified by the arrow that is entered
-    void update(); // handles recoordinating the new tile positions, updating score, checking game state, etc
+    void rotatePiece(const sf::Keyboard::Scancode &key); // rotates the current piece in play 90 degrees either CW or CCW, depending on the key
+    void cropPlayGrid(const std::array<std::array<Cell*, 4>, 4> &pieceGrid); // crops the playGrid to only be as big as it needs to be-- i.e. only including rows and columns that actually have values
 };
