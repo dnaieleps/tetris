@@ -48,7 +48,7 @@ public:
     void addRandomPieceToQueue(); // helper function that adds a random Piece to the pieceQueue
     void swapHeldPiece(); // swaps the held piece with the piece that is currently in play
     void spawnPiece(); // spawns the next piece off the top of the pieceQueue to the top of the mainGrid with basis {0, 4}
-    void redrawPiece(const std::vector<std::vector<Cell*>> &currentPG, const std::array<int, 2> &basisCoords); // redraws Piece to the mainGrid, given a specific basis point
+    void redrawPiece(const std::vector<std::vector<Cell*>> &currentPG, const std::array<int, 2> &basisCoords); // redraws Piece to the mainGrid, given a specific basis point while also doing bounds checking
     void movePiece(const sf::Keyboard::Scancode &key); // moves the copied piece along the board as signified by the arrow that is entered
     void rotatePiece(const sf::Keyboard::Scancode &key); // rotates the current piece in play 90 degrees either CW or CCW, depending on the key
     void cropPlayGrid(const std::array<std::array<Cell*, 4>, 4> &pieceGrid); // crops the playGrid to only be as big as it needs to be-- i.e. only including rows and columns that actually have values

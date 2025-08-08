@@ -15,18 +15,17 @@
 
 /* class definition that serves as the blueprint for each of the Tetris pieces
 *   @type -> a number that is unique to every kind of Tetris piece. There are only 7 types of pieces
-*   @rotation -> unsigned integer that stores 
+*   @rotation -> unsigned integer that stores the orientation of the piece in degrees, where 0 is the base rotation
+*   @basisCoords -> 2 element-long array that stores the {X, Y} coordinates of the basis point of the Piece, meaning that's where it's going to be drawn from 
 *   @pieceGrid -> 2D array that represents the blueprint of how to make each specific piece
-*   @pieceGridRotations -> as opposed to actually doing matrix multiplication to rotate the pieces, 
-    i'm just making them different rotated versions of themselves stored in this array because i don't know how to do that yet 
+*   @rotationsAndBases -> ordered map that stores the 
 */
 
 class Piece { 
 private:
-    int type;
-    u_int16_t rotation; 
+    u_int16_t type, rotation; 
     std::array<std::array<Cell*, 4>, 4> currentPieceGrid;
-    std::array<std::array<std::array<Cell*, 4>, 4>, 4> pieceGridRotations; 
+    std::unordered_map<u_int16_t, std::pair<std::array<u_int16_t, 2>, std::array<std::array<Cell*, 4>, 4>>> degreesBasesAndGrids; 
 
 public:
     Piece() = default;
@@ -36,7 +35,7 @@ public:
     u_int16_t getRotation(); 
     const std::array<std::array<Cell*, 4>, 4>& getCurrentPieceGrid() const;
 
-    void setRotation(int rotation_); 
+    void setRotation(u_int16_t rotation_); 
 
     void clearGrid(sf::RectangleShape cover); 
 

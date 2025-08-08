@@ -281,8 +281,14 @@ void Game::rotatePiece(const sf::Keyboard::Scancode &key){
             break; 
     }
 
+    cropPlayGrid(currentPiece->getCurrentPieceGrid()); 
+
     // redraws the piece to the mainGrid after rotating 
-    
+    for (int i = 0; i < playGrid.size(); i++) {
+        for (int j = 0; j < playGrid[i].size(); j++) {
+
+        }
+    }
 }
 void Game::cropPlayGrid(const std::array<std::array<Cell*, 4>, 4> &pieceGrid) {
     int horizontalBound, verticalBound = 4; 

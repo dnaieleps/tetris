@@ -5,7 +5,7 @@
 Piece::Piece(int type_){
     type = type_;  
     rotation = 0; 
-    pieceGridRotations = std::array<std::array<std::array<Cell*, 4>, 4>, 4>(); 
+    degreesBasesAndGrids = std::unordered_map<u_int16_t, std::pair<std::array<u_int16_t, 2>, std::array<std::array<Cell*, 4>, 4>>>(); 
 
     // characteristics of the default light gray cell in which each pieceGrid will initially be filled with 
     sf::RectangleShape tempCover(Cell::cellDimensions);
@@ -19,7 +19,9 @@ Piece::Piece(int type_){
             currentPieceGrid[i][j] = new Cell(tempCover); 
         }
     }
-    
+
+
+    auto tempPair = std::pair<std::array<u_int16_t, 2>, std::array<std::array<Cell*, 4>, 4>>({0, 0}, currentPieceGrid); 
     switch (type) {
         case 1: // I piece
             tempCover.setFillColor(LIGHT_BLUE); 
@@ -29,7 +31,12 @@ Piece::Piece(int type_){
             currentPieceGrid[1][0] = new Cell(tempCover);                       //   [1, 0, 0, 0],
             currentPieceGrid[2][0] = new Cell(tempCover);                       //   [1, 0, 0, 0], 
             currentPieceGrid[3][0] = new Cell(tempCover);                       //   [1, 0, 0, 0]]
-            pieceGridRotations[0] = pieceGridRotations[2] = currentPieceGrid; 
+
+            tempPair.first = {1, 0};  tempPair.second = currentPieceGrid; 
+            degreesBasesAndGrids[0] = tempPair; 
+
+            tempPair.first = {2, 0};  tempPair.second = currentPieceGrid; 
+            degreesBasesAndGrids[180] = tempPair; 
             clearGrid(cleanCover); 
 
             // horizontal rotations
@@ -37,7 +44,12 @@ Piece::Piece(int type_){
             currentPieceGrid[0][1] = new Cell(tempCover);                       //   [0, 0, 0, 0],  
             currentPieceGrid[0][2] = new Cell(tempCover);                       //   [0, 0, 0, 0],  
             currentPieceGrid[0][3] = new Cell(tempCover);                       //   [0, 0, 0, 0]]  
-            pieceGridRotations[1] = pieceGridRotations[3] = currentPieceGrid; 
+
+            tempPair.first = {0, 1};  tempPair.second = currentPieceGrid; 
+            degreesBasesAndGrids[90] = tempPair;
+
+            tempPair.first = {0, 2};  tempPair.second = currentPieceGrid; 
+            degreesBasesAndGrids[270] = tempPair; 
             break; 
         case 2: // O piece
             tempCover.setFillColor(YELLOW); 
@@ -47,7 +59,7 @@ Piece::Piece(int type_){
             currentPieceGrid[0][1] = new Cell(tempCover);                       //   [1, 1, 0, 0],  
             currentPieceGrid[1][0] = new Cell(tempCover);                       //   [0, 0, 0, 0],  
             currentPieceGrid[1][1] = new Cell(tempCover);                       //   [0, 0, 0, 0]]  
-            pieceGridRotations[0] = pieceGridRotations[1] = pieceGridRotations[2]  = pieceGridRotations[3] = currentPieceGrid; 
+            // rotationsAndBases[0] = rotationsAndBases[1] = rotationsAndBases[2]  = rotationsAndBases[3] = currentPieceGrid; 
             break; 
         case 3: // L piece 
             tempCover.setFillColor(ORANGE); 
@@ -57,14 +69,14 @@ Piece::Piece(int type_){
             currentPieceGrid[1][0] = new Cell(tempCover);                       //   [1, 0, 0, 0],  
             currentPieceGrid[2][0] = new Cell(tempCover);                       //   [1, 1, 0, 0],  
             currentPieceGrid[2][1] = new Cell(tempCover);                       //   [0, 0, 0, 0]]  
-            pieceGridRotations[0] = currentPieceGrid; 
+            // rotationsAndBases[0] = currentPieceGrid; 
             clearGrid(cleanCover); 
 
             currentPieceGrid[0][0] = new Cell(tempCover);                       //  [[1, 1, 0, 0],  
             currentPieceGrid[0][1] = new Cell(tempCover);                       //   [0, 1, 0, 0],  
             currentPieceGrid[1][1] = new Cell(tempCover);                       //   [0, 1, 0, 0],  
             currentPieceGrid[2][1] = new Cell(tempCover);                       //   [0, 0, 0, 0]]  
-            pieceGridRotations[2] = currentPieceGrid; 
+            // rotationsAndBases[2] = currentPieceGrid; 
             clearGrid(cleanCover); 
 
             // horizontal rotations
@@ -72,14 +84,14 @@ Piece::Piece(int type_){
             currentPieceGrid[1][1] = new Cell(tempCover);                       //   [1, 1, 1, 0],  
             currentPieceGrid[1][2] = new Cell(tempCover);                       //   [0, 0, 0, 0],  
             currentPieceGrid[0][2] = new Cell(tempCover);                       //   [0, 0, 0, 0]]  
-            pieceGridRotations[1] = currentPieceGrid; 
+            // rotationsAndBases[1] = currentPieceGrid; 
             clearGrid(cleanCover); 
 
             currentPieceGrid[1][0] = new Cell(tempCover);                       //  [[1, 1, 1, 0],  
             currentPieceGrid[0][0] = new Cell(tempCover);                       //   [1, 0, 0, 0],  
             currentPieceGrid[0][1] = new Cell(tempCover);                       //   [0, 0, 0, 0],  
             currentPieceGrid[0][2] = new Cell(tempCover);                       //   [0, 0, 0, 0]]  
-            pieceGridRotations[3] = currentPieceGrid; 
+            // rotationsAndBases[3] = currentPieceGrid; 
             break; 
         case 4: // J piece
             tempCover.setFillColor(DARK_BLUE);
@@ -102,7 +114,8 @@ Piece::Piece(int type_){
             break; 
     }
 
-    currentPieceGrid = pieceGridRotations[0];
+    // setting the default starting pieceGrid to be the one at 0 degrees 
+    currentPieceGrid = degreesBasesAndGrids[0].second;
 }
 Piece::~Piece(){
     for (const auto &p : currentPieceGrid) {
@@ -120,16 +133,13 @@ u_int16_t Piece::getRotation() {
 const std::array<std::array<Cell*, 4>, 4>& Piece::getCurrentPieceGrid() const {
     return currentPieceGrid; 
 }
-
-void Piece::setRotation(int rotation_) {
-    rotation = rotation_;
-    currentPieceGrid = pieceGridRotations[rotation / 90]; 
+void Piece::setRotation(u_int16_t rotation_) {
+    rotation = rotation_; 
+    currentPieceGrid = degreesBasesAndGrids[rotation].second; 
 }
-
 bool Piece::operator==(const Piece& other) {
     return type == other.type; 
 }
-
 void Piece::clearGrid(sf::RectangleShape cover) {
     for (int i = 0; i < currentPieceGrid.size(); i++) {
         for (int j = 0; j < currentPieceGrid[i].size(); j++) {
