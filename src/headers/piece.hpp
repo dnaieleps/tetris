@@ -24,20 +24,24 @@
 class Piece { 
 private:
     u_int16_t type, rotation; 
+    std::array<int, 2> basisGlobalPos; 
     std::array<std::array<Cell*, 4>, 4> currentPieceGrid;
-    std::unordered_map<u_int16_t, std::pair<std::array<u_int16_t, 2>, std::array<std::array<Cell*, 4>, 4>>> degreesBasesAndGrids; 
+    std::unordered_map<u_int16_t, std::pair<std::array<int, 2>, std::array<std::array<Cell*, 4>, 4>>> degreesBasesAndGrids; 
 
 public:
     Piece() = default;
     Piece(int type_);
     ~Piece();
+
     int getType(); 
     u_int16_t getRotation(); 
-    const std::array<std::array<Cell*, 4>, 4>& getCurrentPieceGrid() const;
+    const std::array<std::array<Cell*, 4>, 4>& getCurrentPieceGrid();
+    const std::array<int, 2>& getBasis();  
+    const std::array<int, 2>& getBasisPos(); 
 
     void setRotation(u_int16_t rotation_); 
+    void setBasisPos(const std::array<int, 2> &newPos); 
 
     void clearGrid(sf::RectangleShape cover); 
-
     bool operator==(const Piece& other); 
 };

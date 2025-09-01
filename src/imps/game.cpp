@@ -5,8 +5,8 @@
 Game::Game() {
     score = 0; 
     tickSpeed = 1; 
-    paused = gameOver = justSwapped = false; 
-    heldPiece = new Piece(0); 
+    paused = gameOver = justSwapped = false;
+    heldPiece = nextPiece = new Piece(0); 
     
     // initializing the pieceQueue
     for (int i = 0; i < 6; i++) {
@@ -80,19 +80,18 @@ Game::Game() {
     }
 }
 Game::~Game() {
-    delete currentPiece; 
-    delete nextPiece; 
     delete heldPiece; 
-
-    // pieceQueue destructor 
+    
+    // pieceQueue destructor (deletes nextPiece, next3Pieces, and currentPiece)
     while (!pieceQueue.empty()) {
         delete pieceQueue.front(); 
         pieceQueue.pop(); 
+        
     }
-
+    
     // mainGrid destructor 
-    for (std::array<Cell*, 10> a : mainGrid) {
-        for (Cell* c : a) {
+    for (std::array<Cell*, 10> &row : mainGrid) {
+        for (Cell* c : row) {
             delete c; 
         }
     }
@@ -157,14 +156,13 @@ Piece& Game::getNextPiece() {
     return *pieceQueue.front(); 
 }
 
-
 void Game::addRandomPieceToQueue() {
     std::random_device rand; 
     std::mt19937 gen(rand()); 
-    std::uniform_int_distribution<> distr(1, 7); 
+    std::uniform_int_distribution<> distr(1, 7);
     int randomNumber = distr(gen); 
     
-    auto randomPiece = new Piece(3); //      PUT RANDOMNUMBER BACK WHEN DONE WITH ALL BLUEPRINTS
+    auto randomPiece = new Piece(randomNumber);
     pieceQueue.push(randomPiece); 
 }
 void Game::spawnPiece() {
@@ -187,7 +185,7 @@ void Game::spawnPiece() {
         }
         pRow++; 
     }
-
+    
     cropPlayGrid(currentPiece->getCurrentPieceGrid()); 
 
     // update each of the Piece pointers appropriately 
@@ -248,12 +246,7 @@ void Game::swapHeldPiece() {
 void Game::movePiece(const sf::Keyboard::Scancode &key) {
     switch (key) {
         case sf::Keyboard::Scancode::A: // moving all of the currentPieces tiles one tile left, if possible            
-            for (int i = 0; i < playGrid.size(); i++) {
-                for (int j = 0; j < playGrid[i].size(); j++) {
-                    auto currentPos = playGrid[i][j]->getCover().getPosition();
-                    playGrid[i][j]->getCover().setPosition({currentPos.x + 30, currentPos.y}); 
-                }
-            }
+            
             break; 
         case sf::Keyboard::Scancode::D: 
             break; 
@@ -268,9 +261,10 @@ void Game::movePiece(const sf::Keyboard::Scancode &key) {
 void Game::rotatePiece(const sf::Keyboard::Scancode &key){ 
     // rotates the piece either CW or CCW depending on which key was pressed 
     switch (key) {
-        case sf::Keyboard::Scancode::E: // rotate CW 
+        case sf::Keyboard::Scancode::E: // CW 
             if (currentPiece->getRotation() < 270) {
                 currentPiece->setRotation(currentPiece->getRotation() + 90); 
+
             } else { 
                 currentPiece->setRotation(0); 
             }
@@ -306,6 +300,7 @@ void Game::cropPlayGrid(const std::array<std::array<Cell*, 4>, 4> &pieceGrid) {
             }
         }
     }
+    
 
     foundBound = false; 
 
@@ -319,6 +314,13 @@ void Game::cropPlayGrid(const std::array<std::array<Cell*, 4>, 4> &pieceGrid) {
                 foundBound = true; 
                 break; 
             }
+        }
+    }
+
+    // freeing all of the Cell pointers in the playGrid before filling it back up again
+    for (auto &r : playGrid) {
+        for (Cell* c : r) { 
+            delete c; 
         }
     }
 
